@@ -3,7 +3,6 @@ package cmu.ds.mr.io;
 public class Path {
   private String path;
   
-  
   public Path() {
     super();
   }
@@ -12,7 +11,7 @@ public class Path {
     super();
     this.path = path;
   }
-
+ 
   public String getPath() {
     return path;
   }

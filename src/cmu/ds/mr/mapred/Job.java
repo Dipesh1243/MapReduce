@@ -11,41 +11,18 @@ import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.JobStatus.JobState;
 
 /**
- * Job class in the submitter's view. Can
- * 1. Configure job
- * 2. Kill job 
- * 3. Query progress or status
+ * Job class for running job
  * 
  * */
-public class Job {
+public class Job implements RunningJob {
 
   private static final Log LOG = LogFactory.getLog(Job.class);
 
   private JobID jid;
   private String message;
-  private String jobName;
   private JobConf jobConf;
   private JobStatus jobStatus;
   
-  private JobClient jobClient;
-  private RunningJob infoJob; // job handle in job tracker
-  
-  /**
-   * Submit the job to the cluster and return immediately.
-   * @throws IOException
-   */
-  public void submit() throws IOException, InterruptedException, 
-                              ClassNotFoundException {
-    infoJob = jobClient.submitJob(jobConf);
-    jobStatus.setState(JobStatus.JobState.RUNNING);
-   }
-  
-
-
-  public synchronized void setState() {
-    
-  }
-
   public String getMessage() {
     return message;
   }
@@ -62,65 +39,69 @@ public class Job {
     this.jobConf = jobConf;
   }
 
-  public void setJobState(JobStatus jobState) {
-    this.jobStatus = jobState;
+  public void setJobStatus(JobStatus jobStatus) {
+    this.jobStatus = jobStatus;
   }
 
-  @Override
   public JobID getID() {
-    ensureState(JobState.RUNNING);
-    return info.getID();
+    return jid;
   }
 
   @Override
   public String getJobName() {
-    return jobname;
+    return jobConf.getJobName();
   }
 
   @Override
   public float mapProgress() throws IOException {
-    ensureState(JobState.RUNNING);
-    return info.mapProgress();
+    return jobStatus.getMapProgress();
   }
 
   @Override
   public float reduceProgress() throws IOException {
-    ensureState(JobState.RUNNING);
-    return infoJob.reduceProgress();
+    return jobStatus.getReduceProgress();
   }
 
   @Override
   public boolean isComplete() throws IOException {
     ensureState(JobState.RUNNING);
-    return info.isComplete();
+    return jobStatus.isJobComplete();
   }
 
   @Override
   public boolean isSuccessful() throws IOException {
     ensureState(JobStatus.JobState.RUNNING);
-    return infoJob.isSuccessful();
+    return jobStatus.isJobComplete();
   }
   
   @Override
   public void killJob() throws IOException {
     ensureState(JobStatus.JobState.RUNNING);
-    info.killJob();
+    jobStatus.setState(JobState.KILLED);
   }
 
+  /**
+   * block and wait for job completion
+   * */
   @Override
   public void waitForCompletion() throws IOException {
-    // TODO Auto-generated method stub
-    
+    while (!isComplete()) {
+      try {
+        Thread.sleep(5000);
+      } catch (InterruptedException ie) {
+      }
+    }
   }
 
   @Override
-  public int getJobState() throws IOException {
-    // TODO Auto-generated method stub
-    return 0;
+  public JobState getJobState() throws IOException {
+    return jobStatus.getState();
   }
   
   private void ensureState(JobState state) throws IllegalStateException {
     if (state != jobStatus.getState()) {
+      LOG.error("Job in state "+ jobStatus.getState() + 
+              " instead of " + state);
       throw new IllegalStateException("Job in state "+ jobStatus.getState() + 
                                       " instead of " + state);
     }

@@ -185,12 +185,12 @@ interface JobSubmissionProtocol {
 //  public String[] getTaskDiagnostics(TaskAttemptID taskId) 
 //  throws IOException;
 //
-//  /**
-//   * Grab the jobtracker system directory path where job-specific files are to be placed.
-//   * 
-//   * @return the system directory where job-specific files are to be placed.
-//   */
-//  public String getSystemDir();  
+  /**
+   * Grab the jobtracker system directory path where job-specific files are to be placed.
+   * 
+   * @return the system directory where job-specific files are to be placed.
+   */
+  public String getSystemDir();  
 //  
 //  /**
 //   * Gets set of Job Queues associated with the Job Tracker

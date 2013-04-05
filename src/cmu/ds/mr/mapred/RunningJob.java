@@ -125,7 +125,7 @@ public interface RunningJob {
    * 
    * @throws IOException
    */
-  public int getJobState() throws IOException;
+  public JobStatus.JobState getJobState() throws IOException;
   
   /**
    * Kill the running job.  Blocks until all job tasks have been
