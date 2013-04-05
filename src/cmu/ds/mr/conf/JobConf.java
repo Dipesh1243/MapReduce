@@ -9,26 +9,66 @@ import org.apache.commons.logging.LogFactory;
 import cmu.ds.mr.io.Path;
 
 public class JobConf {
-  private static final Log LOG =
-          LogFactory.getLog(JobConf.class); 
+  private static final Log LOG = LogFactory.getLog(JobConf.class); 
   private static final String NUM_MAP_TASK = "mapred.map.tasks";
   private static final String NUM_RED_TASK = "mapred.red.tasks";
-  
+  private static final String JOB_NAME = "mapred.job.name";
   
   private ArrayList<Object> resources = new ArrayList();
   
   private ArrayList<Path> inputpath = new ArrayList();
   private Path outputpath = new Path();
-  private int num_reducer;
+  private int numReduceTasks;
   
-  private Class<?> mapperclass;
-  private Class<?> reducerclass;
+  private Class<?> mapclass;
+  private Class<?> redclass;
+  private Class mainclass;
+  private Class outputKeyClass;
+  private Class outputValueClass;
   
   private Properties properties = new Properties();
-  private String jobName;
   
+
   
+  public Class getOutputKeyClass() {
+    return outputKeyClass;
+  }
+
+  public void setOutputKeyClass(Class outputKeyClass) {
+    this.outputKeyClass = outputKeyClass;
+  }
+
+  public Class getOutputValueClass() {
+    return outputValueClass;
+  }
+
+  public void setOutputValueClass(Class outputValueClass) {
+    this.outputValueClass = outputValueClass;
+  }
+
+  public int getNumReduceTasks() {
+    return numReduceTasks;
+  }
+
+  public void setNumReduceTasks(int numReduceTasks) {
+    this.numReduceTasks = numReduceTasks;
+  }
+
+  public void setMapperClass(Class mapclass) {
+    this.mapclass = mapclass;
+  }
   
+  public void setReducerClass(Class redclass) {
+    this.redclass = redclass;
+  }
+  
+  public String getJobName() {
+    return get(JOB_NAME);
+  }
+  
+  public void setJobName(String name) {
+    set(JOB_NAME, name);
+  }
   
   public void set(String key, String val) {
     properties.setProperty(key, val);
@@ -57,22 +97,22 @@ public class JobConf {
     this.outputpath = outputpath;
   }
   public int getNum_reducer() {
-    return num_reducer;
+    return numReduceTasks;
   }
-  public void setNum_reducer(int num_reducer) {
-    this.num_reducer = num_reducer;
+  public void setNum_reducer(int numReduceTasks) {
+    this.numReduceTasks = numReduceTasks;
   }
   public Class<?> getMapperclass() {
-    return mapperclass;
+    return mapclass;
   }
   public void setMapperclass(Class<?> mapperclass) {
-    this.mapperclass = mapperclass;
+    this.mapclass = mapperclass;
   }
   public Class<?> getReducerclass() {
-    return reducerclass;
+    return redclass;
   }
   public void setReducerclass(Class<?> reducerclass) {
-    this.reducerclass = reducerclass;
+    this.redclass = reducerclass;
   }
   public Properties getProperties() {
     return properties;
@@ -80,11 +120,4 @@ public class JobConf {
   public void setProperties(Properties properties) {
     this.properties = properties;
   }
-  public String getJobName() {
-    return jobName;
-  }
-  public void setJobName(String jobName) {
-    this.jobName = jobName;
-  }
-  
 }

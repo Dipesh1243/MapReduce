@@ -1,6 +1,9 @@
 package cmu.ds.mr.mapred;
 
 
+import JobClient;
+import RunningJob;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -21,14 +24,30 @@ public class JobClient {
    
   private static final Log LOG = LogFactory.getLog(JobClient.class);
   
-  private Job job;
+  private JobConf jobConf;
   private JobSubmissionProtocol jobTrackerProxy;
   
   private Path sysDir;  // root directory of all job related files
 
-  public JobClient(Job job) {
+  public JobClient(JobConf jobConf) {
     super();
-    this.job = job;
+    this.jobConf = jobConf;
+  }
+  
+  public static RunningJob runJob(JobConf jobConf) {
+    JobClient jc = new JobClient(jobConf);
+    RunningJob job = jc.submitJob(jobConf);
+    // query status and state every second
+    if (!jc.monitorAndPrintJob(jobConf, job)) {
+      throw new IOException("Job failed!");
+    }
+    // job done
+    return job;
+  }
+
+  private boolean monitorAndPrintJob(JobConf jobConf, RunningJob job) {
+    // TODO Auto-generated method stub
+    return false;
   }
 
   public RunningJob submitJob(JobConf jobConf) throws IOException {
