@@ -143,6 +143,13 @@ public interface RunningJob {
   //public void setJobPriority(String priority) throws IOException;
   
   /**
+   * Set job status (since we have update it)
+   * 
+   * @param jobStatusNew the updated job status
+   * */
+  public void setJobStatus(JobStatus jobStatusNew) throws IOException;
+  
+  /**
    * Get events indicating completion (success/failure) of component tasks.
    *  
    * @param startFrom index to start fetching events from

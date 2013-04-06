@@ -6,30 +6,25 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import cmu.ds.mr.io.Path;
+import cmu.ds.mr.util.Util;
 
 public class JobConf {
-  private static final Log LOG = LogFactory.getLog(JobConf.class); 
-  private static final String NUM_MAP_TASK = "mapred.map.tasks";
-  private static final String NUM_RED_TASK = "mapred.red.tasks";
-  private static final String JOB_NAME = "mapred.job.name";
-  
-  private ArrayList<Object> resources = new ArrayList();
-  
-  private ArrayList<Path> inputpath = new ArrayList();
-  private Path outputpath = new Path();
+  private static final Log LOG = LogFactory.getLog(JobConf.class);
+
+  private ArrayList<Object> resources = new ArrayList<Object>();
+
+  private String inpath;
+  private String outpath;
   private int numReduceTasks;
-  
+
   private Class<?> mapclass;
   private Class<?> redclass;
   private Class mainclass;
   private Class outputKeyClass;
   private Class outputValueClass;
-  
-  private Properties properties = new Properties();
-  
 
-  
+  private Properties properties = new Properties();
+
   public Class getOutputKeyClass() {
     return outputKeyClass;
   }
@@ -57,66 +52,71 @@ public class JobConf {
   public void setMapperClass(Class mapclass) {
     this.mapclass = mapclass;
   }
-  
+
   public void setReducerClass(Class redclass) {
     this.redclass = redclass;
   }
-  
+
   public String getJobName() {
-    return get(JOB_NAME);
+    return get(Util.JOB_NAME);
   }
-  
+
   public void setJobName(String name) {
-    set(JOB_NAME, name);
+    set(Util.JOB_NAME, name);
   }
-  
+
   public void set(String key, String val) {
     properties.setProperty(key, val);
   }
-  
+
   public String get(String key) {
     return properties.getProperty(key);
   }
-  
+
   public ArrayList<Object> getResources() {
     return resources;
   }
+
   public void setResources(ArrayList<Object> resources) {
     this.resources = resources;
   }
-  public ArrayList<Path> getInputpath() {
-    return inputpath;
+
+  public String getInpath() {
+    return inpath;
   }
-  public void setInputpath(ArrayList<Path> inputpath) {
-    this.inputpath = inputpath;
+
+  public void setInpath(String inpath) {
+    this.inpath = inpath;
   }
-  public Path getOutputpath() {
-    return outputpath;
+
+  public String getOutpath() {
+    return outpath;
   }
-  public void setOutputpath(Path outputpath) {
-    this.outputpath = outputpath;
+
+  public void setOutpath(String outpath) {
+    this.outpath = outpath;
   }
-  public int getNum_reducer() {
-    return numReduceTasks;
-  }
-  public void setNum_reducer(int numReduceTasks) {
-    this.numReduceTasks = numReduceTasks;
-  }
+
   public Class<?> getMapperclass() {
     return mapclass;
   }
+
   public void setMapperclass(Class<?> mapperclass) {
     this.mapclass = mapperclass;
   }
+
   public Class<?> getReducerclass() {
     return redclass;
   }
+
   public void setReducerclass(Class<?> reducerclass) {
     this.redclass = reducerclass;
   }
+
   public Properties getProperties() {
     return properties;
   }
+
   public void setProperties(Properties properties) {
     this.properties = properties;
   }

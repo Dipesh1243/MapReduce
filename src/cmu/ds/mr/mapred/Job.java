@@ -23,6 +23,12 @@ public class Job implements RunningJob {
   private JobConf jobConf;
   private JobStatus jobStatus;
   
+  public Job(JobID jid, JobConf jobConf, JobStatus jobStatus) {
+    this.jid = jid;
+    this.jobStatus = jobStatus;
+    this.jobConf = jobConf;
+  }
+  
   public String getMessage() {
     return message;
   }
