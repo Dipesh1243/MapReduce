@@ -48,6 +48,10 @@ public class Job implements RunningJob {
   public void setJobStatus(JobStatus jobStatus) {
     this.jobStatus = jobStatus;
   }
+  
+  public JobStatus getJobStatus() {
+    return jobStatus;
+  }
 
   public JobID getID() {
     return jid;

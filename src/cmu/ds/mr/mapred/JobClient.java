@@ -20,6 +20,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
+import cmu.ds.mr.io.FileSplit;
+import cmu.ds.mr.io.FileSplitter;
 import cmu.ds.mr.util.Util;
 
 /**
@@ -101,8 +103,10 @@ public class JobClient {
     JobID jid = jobTrackerProxy.getNewJobId();
 
     // TODO: split input files
-    String jobRootDir = getSystemDir().toString() + File.separatorChar + jid.toString();
-    splitInputFiles(jobConf, jobRootDir);
+    //String jobRootDir = getSystemDir().toString() + File.separatorChar + jid.toString();
+    FileSplitter splitter = new FileSplitter();
+    List<FileSplit> splitFiles = splitter.getSplits(jobConf);
+    jobConf.setSplitFiles(splitFiles);
 
     // step 3: submit job
     JobStatus status = jobTrackerProxy.submitJob(jid);
@@ -125,9 +129,10 @@ public class JobClient {
   /**
    * Split input files
    * 
+   * @return # of maps 
    * @throws IOException
    * */
-  public void splitInputFiles(JobConf jobConf, String jobRootDir) throws IOException {
+  public int splitInputFiles(JobConf jobConf, String jobRootDir) throws IOException {
     File dirFile = new File(jobRootDir);
     if (!dirFile.exists())
       dirFile.mkdirs();
@@ -182,5 +187,7 @@ public class JobClient {
       br.close();
       bw.close();
     }
+    
+    return cnt;
   }
 }

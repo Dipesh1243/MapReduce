@@ -1,11 +1,13 @@
 package cmu.ds.mr.conf;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import cmu.ds.mr.io.FileSplit;
 import cmu.ds.mr.util.Util;
 
 public class JobConf {
@@ -23,8 +25,19 @@ public class JobConf {
   private Class mainclass;
   private Class outputKeyClass;
   private Class outputValueClass;
-
+  
+  private List<FileSplit> splitFiles;
+  
   private Properties properties = new Properties();
+
+  
+  public List<FileSplit> getSplitFiles() {
+    return splitFiles;
+  }
+
+  public void setSplitFiles(List<FileSplit> splitFiles) {
+    this.splitFiles = splitFiles;
+  }
 
   public String getJobTrackerAddr() {
     return jobTrackerAddr;

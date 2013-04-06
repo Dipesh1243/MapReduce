@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+import cmu.ds.mr.conf.JobConf;
+
 
 /** 
  * Protocol that a JobClient and the central JobTracker use to communicate.  The
@@ -79,7 +81,7 @@ interface JobSubmissionProtocol extends Remote {
    * that job.
    * The job files should be submitted in <b>system-dir</b>/<b>jobName</b>.
    */
-  public JobStatus submitJob(JobID jobName) throws IOException, RemoteException;
+  public JobStatus submitJob(JobID jobName, JobConf jobConf) throws IOException, RemoteException;
 
   /**
    * Get the current status of the cluster
