@@ -20,6 +20,8 @@ package cmu.ds.mr.mapred;
 
 
 import java.io.IOException;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 
 /** 
@@ -27,7 +29,7 @@ import java.io.IOException;
  * JobClient can use these methods to submit a Job for execution, and learn about
  * the current system status.
  */ 
-interface JobSubmissionProtocol {
+interface JobSubmissionProtocol extends Remote {
   /* 
    *Changing the versionID to 2L since the getTaskCompletionEvents method has
    *changed.
@@ -70,14 +72,14 @@ interface JobSubmissionProtocol {
    * @return a unique job name for submitting jobs.
    * @throws IOException
    */
-  public JobID getNewJobId() throws IOException;
+  public JobID getNewJobId() throws IOException, RemoteException;
 
   /**
    * Submit a Job for execution.  Returns the latest profile for
    * that job.
    * The job files should be submitted in <b>system-dir</b>/<b>jobName</b>.
    */
-  public JobStatus submitJob(JobID jobName) throws IOException;
+  public JobStatus submitJob(JobID jobName) throws IOException, RemoteException;
 
   /**
    * Get the current status of the cluster
@@ -90,7 +92,7 @@ interface JobSubmissionProtocol {
   /**
    * Kill the indicated job
    */
-  public void killJob(JobID jobid) throws IOException;
+  public void killJob(JobID jobid) throws IOException, RemoteException;
 
   /**
    * Set the priority of the specified job
@@ -117,7 +119,7 @@ interface JobSubmissionProtocol {
    * Grab a handle to a job that is already known to the JobTracker.
    * @return Status of the job, or null if not found.
    */
-  public JobStatus getJobStatus(JobID jobid) throws IOException;
+  public JobStatus getJobStatus(JobID jobid) throws IOException, RemoteException;
 
   /**
    * Grab the current job counters
@@ -157,13 +159,13 @@ interface JobSubmissionProtocol {
    * @return array of JobStatus for the running/to-be-run
    * jobs.
    */
-  public JobStatus[] jobsToComplete() throws IOException;
+  public JobStatus[] jobsToComplete() throws IOException, RemoteException;
     
   /** 
    * Get all the jobs submitted. 
    * @return array of JobStatus for the submitted jobs
    */
-  public JobStatus[] getAllJobs() throws IOException;
+  public JobStatus[] getAllJobs() throws IOException, RemoteException;
   
   /**
    * Get task completion events for the jobid, starting from fromEventId. 
@@ -190,7 +192,7 @@ interface JobSubmissionProtocol {
    * 
    * @return the system directory where job-specific files are to be placed.
    */
-  public String getSystemDir();  
+  public String getSystemDir() throws RemoteException;  
 //  
 //  /**
 //   * Gets set of Job Queues associated with the Job Tracker

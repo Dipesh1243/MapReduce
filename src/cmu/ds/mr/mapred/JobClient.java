@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -26,9 +28,7 @@ public class JobClient {
   private static final Log LOG = LogFactory.getLog(JobClient.class);
 
   private JobConf jobConf;
-
   private JobSubmissionProtocol jobTrackerProxy;
-
   private Job job; // Implementation of RunningJob
 
   private String sysDir; // root directory of all job related files
@@ -39,6 +39,17 @@ public class JobClient {
     super();
     this.jobConf = jobConf;
     readConfig();
+    // initialize remote object (jobTrackerProxy)
+    initProxy();
+  }
+  
+  public void initProxy() {
+    if (System.getSecurityManager() == null) {
+      System.setSecurityManager(new SecurityManager());
+    }
+    // TODO: get job tracker start address
+    Registry registry = LocateRegistry.getRegistry(JobTracker.getAddress());
+    jobTrackerProxy = (JobSubmissionProtocol) registry.lookup(Util.SERVICE_NAME);
   }
 
   public void readConfig() throws FileNotFoundException, IOException {
@@ -63,6 +74,7 @@ public class JobClient {
   private boolean monitorAndPrintJob(JobConf jobConf, RunningJob job) throws IOException,
           InterruptedException {
     JobID jid = job.getID();
+    String logstrPre = "";
 
     while (!job.isComplete()) {
       Thread.sleep(Util.TIME_INTERVAL_MONITOR);
@@ -73,8 +85,11 @@ public class JobClient {
 
       String logstr = String.format("%s: map %.1f\\%\treduce %.1f\\%", jid.toString(),
               job.mapProgress(), job.reduceProgress());
-      LOG.info(logstr);
-      System.out.println(logstr);
+      if(!logstr.equals(logstrPre)) {
+        LOG.info(logstr);
+        System.out.println(logstr);
+        logstrPre = logstr;
+      }
     }
     return true;
   }
@@ -102,7 +117,7 @@ public class JobClient {
    * Get the root directory of
    * */
   public String getSystemDir() {
-    return System.getProperty("user.dir");
+    return prop.getProperty(Util.SYS_ROOT_DIR);
   }
 
   /**
