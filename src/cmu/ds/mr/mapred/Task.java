@@ -8,10 +8,18 @@ import cmu.ds.mr.conf.JobConf;
 public class Task {
   private static final Log LOG = LogFactory.getLog(Task.class);
   
+  public static enum TaskState {
+    SUCCEEDED, WAITING, DEFINE, RUNNING, READY, FAILED, KILLED
+  };
+  
+  private String inputpath;
   private long rangeStart;
-  private long rangeEnd;
+  private long length;
+  
+  private String outputpath;
   
   protected JobConf conf;
-  
+  protected JobID jobid;
+  protected TaskState state;
   
 }
