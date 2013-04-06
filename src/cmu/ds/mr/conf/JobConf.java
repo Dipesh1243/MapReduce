@@ -15,6 +15,7 @@ public class JobConf {
 
   private String inpath;
   private String outpath;
+  private String jobTrackerAddr;
   private int numReduceTasks;
 
   private Class<?> mapclass;
@@ -25,6 +26,15 @@ public class JobConf {
 
   private Properties properties = new Properties();
 
+  public String getJobTrackerAddr() {
+    return jobTrackerAddr;
+  }
+
+  public void setJobTrackerAddr(String jobTrackerAddr) {
+    this.jobTrackerAddr = jobTrackerAddr;
+  }
+
+  
   public Class getOutputKeyClass() {
     return outputKeyClass;
   }

@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public class JobClient {
 
   private Properties prop = new Properties();
 
-  public JobClient(JobConf jobConf) throws FileNotFoundException, IOException {
+  public JobClient(JobConf jobConf) throws FileNotFoundException, IOException, NotBoundException {
     super();
     this.jobConf = jobConf;
     readConfig();
@@ -43,12 +45,12 @@ public class JobClient {
     initProxy();
   }
   
-  public void initProxy() {
+  public void initProxy() throws RemoteException, NotBoundException {
     if (System.getSecurityManager() == null) {
       System.setSecurityManager(new SecurityManager());
     }
-    // TODO: get job tracker start address
-    Registry registry = LocateRegistry.getRegistry(JobTracker.getAddress());
+    // get job tracker start address fomr jobConf
+    Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
     jobTrackerProxy = (JobSubmissionProtocol) registry.lookup(Util.SERVICE_NAME);
   }
 
@@ -56,7 +58,7 @@ public class JobClient {
     prop.load(new FileInputStream("./conf/jobClient.conf"));
   }
 
-  public static RunningJob runJob(JobConf jobConf) throws IOException, InterruptedException {
+  public static RunningJob runJob(JobConf jobConf) throws IOException, InterruptedException, NotBoundException {
     JobClient jc = new JobClient(jobConf);
     RunningJob job = jc.submitJob(jobConf);
 
