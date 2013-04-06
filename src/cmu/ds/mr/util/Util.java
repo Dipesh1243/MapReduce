@@ -11,5 +11,7 @@ public class Util {
   public static final String JOB_NAME = "mapred.job.name";
   
   public static final String SERVICE_NAME = "JobSubmissionProtocol";
+  
+  public static final String CONFIG_PATH = "./conf/mapred.conf";
 
 }

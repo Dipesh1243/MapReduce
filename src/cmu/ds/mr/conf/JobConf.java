@@ -1,5 +1,6 @@
 package cmu.ds.mr.conf;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -10,7 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import cmu.ds.mr.io.FileSplit;
 import cmu.ds.mr.util.Util;
 
-public class JobConf {
+public class JobConf implements Serializable {
   private static final Log LOG = LogFactory.getLog(JobConf.class);
 
   private ArrayList<Object> resources = new ArrayList<Object>();
@@ -19,6 +20,7 @@ public class JobConf {
   private String outpath;
   private String jobTrackerAddr;
   private int numReduceTasks;
+  private int numMapTasks;
 
   private Class<?> mapclass;
   private Class<?> redclass;
@@ -70,6 +72,14 @@ public class JobConf {
 
   public void setNumReduceTasks(int numReduceTasks) {
     this.numReduceTasks = numReduceTasks;
+  }
+
+  public int getNumMapTasks() {
+    return numMapTasks;
+  }
+
+  public void setNumMapTasks(int numMapTasks) {
+    this.numMapTasks = numMapTasks;
   }
 
   public void setMapperClass(Class mapclass) {

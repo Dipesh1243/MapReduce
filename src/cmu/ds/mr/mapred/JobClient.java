@@ -57,7 +57,7 @@ public class JobClient {
   }
 
   public void readConfig() throws FileNotFoundException, IOException {
-    prop.load(new FileInputStream("./conf/jobClient.conf"));
+    prop.load(new FileInputStream(Util.CONFIG_PATH));
   }
 
   public static RunningJob runJob(JobConf jobConf) throws IOException, InterruptedException, NotBoundException {
@@ -107,9 +107,10 @@ public class JobClient {
     FileSplitter splitter = new FileSplitter();
     List<FileSplit> splitFiles = splitter.getSplits(jobConf);
     jobConf.setSplitFiles(splitFiles);
+    jobConf.setNumMapTasks(splitFiles.size());  // set # of maps 
 
     // step 3: submit job
-    JobStatus status = jobTrackerProxy.submitJob(jid);
+    JobStatus status = jobTrackerProxy.submitJob(jid, jobConf);
     if (status != null) {
       // return a RunningJob (Job class)
       return new Job(jid, jobConf, status);
@@ -126,68 +127,4 @@ public class JobClient {
     return prop.getProperty(Util.SYS_ROOT_DIR);
   }
 
-  /**
-   * Split input files
-   * 
-   * @return # of maps 
-   * @throws IOException
-   * */
-  public int splitInputFiles(JobConf jobConf, String jobRootDir) throws IOException {
-    File dirFile = new File(jobRootDir);
-    if (!dirFile.exists())
-      dirFile.mkdirs();
-    
-    long fileLen = 0l;
-    long blksize = Long.parseLong((String) prop.get(Util.BLOCK_SIZE));
-    int cnt = 0;
-    String part = "part-", line;
-    String outpath = String.format("%s%c%s%05d", jobConf.getOutpath(), File.separatorChar,
-            "part-", cnt);
-    BufferedReader br = null;
-    BufferedWriter bw = new BufferedWriter(new FileWriter(outpath));
-
-    try {
-      File inFile = new File(jobConf.getInpath());
-      if (inFile.isDirectory()) {
-        // TODO: multiple files
-        File[] files = inFile.listFiles();
-
-        for (int i = 0; i < files.length; i++) {
-          br = new BufferedReader(new FileReader(files[i]));
-          while((line = br.readLine()) != null) {
-            bw.write(line);
-            fileLen += line.getBytes().length;
-
-            if (fileLen >= blksize) {
-              fileLen = 0;
-              bw.close();
-              outpath = String.format("%s%c%s%05d", jobConf.getOutpath(), File.separatorChar,
-                      "part-", ++cnt);
-              bw = new BufferedWriter(new FileWriter(outpath));
-            }
-          }
-        }
-      } 
-      else {
-        br = new BufferedReader(new FileReader(inFile));
-        while ((line = br.readLine()) != null) {
-          bw.write(line);
-          fileLen += line.getBytes().length;
-
-          if (fileLen >= blksize) {
-            fileLen = 0;
-            bw.close();
-            outpath = String.format("%s%c%s%05d", jobConf.getOutpath(), File.separatorChar,
-                    "part-", ++cnt);
-            bw = new BufferedWriter(new FileWriter(outpath));
-          }
-        }
-      }
-    } finally {
-      br.close();
-      bw.close();
-    }
-    
-    return cnt;
-  }
 }
