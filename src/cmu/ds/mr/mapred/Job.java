@@ -18,7 +18,8 @@ public class Job implements RunningJob {
 
   private static final Log LOG = LogFactory.getLog(Job.class);
 
-  private JobID jid;
+  // TODO: duplicate JobID field in Job
+  private JobID jid;  
   private String message;
   private JobConf jobConf;
   private JobStatus jobStatus;

@@ -1,37 +1,47 @@
 package cmu.ds.mr.mapred;
 
+import TaskRunner;
+import TaskTracker;
+import TaskUmbilicalProtocol;
+
+import java.io.IOException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.io.FileSplit;
 
-public class Task {
+public abstract class Task {
   private static final Log LOG = LogFactory.getLog(Task.class);
-  
-  public static enum TaskState {
-    SUCCEEDED, WAITING, DEFINE, RUNNING, READY, FAILED, KILLED
-  };
-
-  public static enum TaskType {
-    MAP, REDUCE
-  };
   
   private String outputpath;
   
-  protected JobConf conf;
-  protected JobID jobid;
-  protected TaskState state;
-  protected int taskID; //id within a job, also means the index of the splited file
-  protected TaskType type;
+  protected JobConf taskConf;
+  //protected JobID jobid;
+  // task status include JobId, TaskId (communicate using taskStatus)
+  protected TaskStatus taskStatus;  
+  //protected int taskID; //id within a job, also means the index of the splited file
   
-  public Task(JobID jobid, JobConf jobconf, int taskid, TaskType type){
-    this.conf = jobconf;
-    this.jobid = jobid;
-    this.state = TaskState.DEFINE;
-    this.taskID = taskid;
-    this.type = type;
+  public Task(String outputpath, JobConf conf, JobID jobid, TaskStatus taskStatus, int taskID) {
+    super();
+    this.outputpath = outputpath;
+    this.taskConf = conf;
+    this.taskStatus = taskStatus;
   }
+  
+  /** Run this task as a part of the named job.  This method is executed in the
+   * child process and is what invokes user-supplied map, reduce, etc. methods.
+   * @param umbilical for progress reports
+   */
+  public abstract void run(JobConf job, TaskUmbilicalProtocol umbilical)
+    throws IOException, ClassNotFoundException, InterruptedException;
+
+
+  /** Return an approprate thread runner for this task. 
+   * @param tip TODO*/
+  public abstract TaskRunner createRunner(TaskTracker tracker, 
+      TaskTracker.TaskInProgress tip) throws IOException;
 
   public String getOutputpath() {
     return outputpath;
@@ -42,36 +52,21 @@ public class Task {
   }
 
   public JobConf getConf() {
-    return conf;
+    return taskConf;
   }
 
   public void setConf(JobConf conf) {
-    this.conf = conf;
+    this.taskConf = conf;
   }
 
-  public JobID getJobid() {
-    return jobid;
+
+  public TaskStatus getTaskStatus() {
+    return taskStatus;
   }
 
-  public void setJobid(JobID jobid) {
-    this.jobid = jobid;
+  public void setTaskStatus(TaskStatus taskStatus) {
+    this.taskStatus = taskStatus;
   }
 
-  public TaskState getState() {
-    return state;
-  }
-
-  public void setState(TaskState state) {
-    this.state = state;
-  }
-
-  public int getTaskID() {
-    return taskID;
-  }
-
-  public void setTaskID(int taskID) {
-    this.taskID = taskID;
-  }
-  
   
 }
