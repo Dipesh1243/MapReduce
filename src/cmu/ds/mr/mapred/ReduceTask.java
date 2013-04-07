@@ -8,7 +8,7 @@ import cmu.ds.mr.conf.JobConf;
 public class ReduceTask extends Task {
   private static final Log LOG = LogFactory.getLog(ReduceTask.class.getName());
 
-  public ReduceTask(JobID jobid, JobConf conf, int taskID) {
-    super(jobid, conf, taskID);
+  public ReduceTask(JobID jobid, JobConf conf, int taskID, Task.TaskType type) {
+    super(jobid, conf, taskID, type);
   }
 }

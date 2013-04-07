@@ -9,7 +9,7 @@ public class MapTask extends Task {
 
   private static final Log LOG = LogFactory.getLog(MapTask.class.getName());
   
-  public MapTask(JobID jobid, JobConf conf, int taskID){
-    super(jobid, conf, taskID);
+  public MapTask(JobID jobid, JobConf conf, int taskID, Task.TaskType type){
+    super(jobid, conf, taskID, type);
   }
 }

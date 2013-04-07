@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -22,12 +23,12 @@ public class JobTracker implements JobSubmissionProtocol{
 //  State state = State.INITIALIZING;
 
   private Queue<JobInProgress> jobQueue = new LinkedList<JobInProgress>();
-  private Queue<Task> taskQueue;
   private Map<JobID, JobInProgress> jobTable = new TreeMap<JobID, JobInProgress>();
   private Map<TaskTracker, Boolean> tasktrackers;
   
+  
+  private TaskScheduler taskscheduler = new TaskScheduler(jobQueue, jobTable);
   private String jobIdentifier;  
-  private JobScheduler jobscheduler;
 //  private final TaskScheduler taskScheduler = new TaskScheduler();
   
   private int nextID = 1;
@@ -150,7 +151,9 @@ public class JobTracker implements JobSubmissionProtocol{
     return null;
   }
   
-  
+  public List<Task> heartbeat(TaskTrackerStatus tasktracker){
+    return taskscheduler.assignTasks(tasktracker);
+  }
   
   
 }

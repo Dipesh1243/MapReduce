@@ -1,23 +1,29 @@
 package cmu.ds.mr.mapred;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import cmu.ds.mr.conf.JobConf;
+
 class TaskScheduler {
   public static final Log LOG = LogFactory.getLog(TaskScheduler.class);
   
-  protected TaskTrackerManager taskTrackerManager;
- 
-
-  public synchronized void setTaskTrackerManager(
-      TaskTrackerManager taskTrackerManager) {
-    this.taskTrackerManager = taskTrackerManager;
-  }
+  private Queue<JobInProgress> jobQueue;
+  private Map<JobID, JobInProgress> jobTable;
+  private Queue<MapTask> maptaskQueue;
+  private Queue<ReduceTask> reducetaskQueue;  
   
+  public TaskScheduler(Queue<JobInProgress> jobQueue, Map<JobID, JobInProgress> jobTable){
+    this.jobQueue = jobQueue;
+    this.jobTable = jobTable;
+  }
   /**
    * Lifecycle method to allow the scheduler to start any work in separate
    * threads.
@@ -35,16 +41,65 @@ class TaskScheduler {
     // do nothing
   }
 
+  
+  private synchronized boolean addTasks(){
+    
+    if(jobQueue.isEmpty()){
+      LOG.info("addTasks(): no more jobs in job queue");
+      return false;
+    }
+    JobInProgress jip = jobQueue.poll();
+    for(int i = 1; i <= jip.getJobconf().getNumMapTasks(); ++i){
+      maptaskQueue.offer(new MapTask(jip.getJobid(), jip.getJobconf(), i, Task.TaskType.MAP));
+    }
+    
+    for(int i = 1; i <= jip.getJobconf().getNumReduceTasks(); ++i){
+      reducetaskQueue.offer(new ReduceTask(jip.getJobid(), jip.getJobconf(), i, Task.TaskType.REDUCE));
+    }
+    return true;
+  }
+  
+  
   /**
    * Returns the tasks we'd like the TaskTracker to execute right now.
    * 
    * @param taskTracker The TaskTracker for which we're looking for tasks.
    * @return A list of tasks to run on that TaskTracker, possibly empty.
    */
-  public List<Task> assignTasks(TaskTrackerStatus taskTracker)
-    throws IOException{
+  public synchronized Task assignTask(Task.TaskType type){
+
+        if(type == Task.TaskType.MAP){
+          if(reducetaskQueue.isEmpty()){
+            if(!addTasks()){
+              return null;
+            }
+          }
+          
+          JobID toreducejob = reducetaskQueue.peek().getJobid();
+          if(jobTable.get(toreducejob).getStatus().getMapProgress() == 1){
+            return reducetaskQueue.poll();
+          }
+        }
+        else{
+          if(maptaskQueue.isEmpty()){
+            if(!addTasks()){
+              return null;
+            }
+          }
+          
+          return maptaskQueue.poll();
+        }
+        return null;
+  }
+  
+  
+  
+  public synchronized List<Task> assignTasks(TaskTrackerStatus taskTracker){
+    //TODO: give tasks to tasktrackers based on their status 
+    
     return null;
   }
+  
 
   /**
    * Returns a collection of jobs in an order which is specific to 
