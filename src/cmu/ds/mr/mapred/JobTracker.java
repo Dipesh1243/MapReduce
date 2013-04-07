@@ -83,6 +83,8 @@ public class JobTracker implements JobSubmissionProtocol{
 
     synchronized (jobTable) {
         jobTable.put(jobId, job);
+        job.getStatus().setState(JobState.WAITING);
+        LOG.info("addJob(): finish adding job #" + job.getJobid().getId());
     }
     return job.getStatus();
   }

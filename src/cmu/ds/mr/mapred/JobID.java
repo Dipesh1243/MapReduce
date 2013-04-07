@@ -44,6 +44,9 @@ import java.text.NumberFormat;
 public class JobID implements Comparable<JobID>, Serializable {
   private static final char SEPARATOR = '_';
   private int id;
+
+
+
   private static final String JOB = "job";
   private final String jtIdentifier;
   
@@ -136,4 +139,11 @@ public class JobID implements Comparable<JobID>, Serializable {
         + " is not properly formed");
   }
 
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
 }
