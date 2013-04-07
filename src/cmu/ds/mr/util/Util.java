@@ -1,5 +1,8 @@
 package cmu.ds.mr.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class Util {
   
   public static final long TIME_INTERVAL_MONITOR = 1000;
@@ -14,4 +17,14 @@ public class Util {
   
   public static final String CONFIG_PATH = "./conf/mapred.conf";
 
+  
+  
+  public static String stringifyException(Throwable e) {
+    StringWriter stm = new StringWriter();
+    PrintWriter wrt = new PrintWriter(stm);
+    e.printStackTrace(wrt);
+    wrt.close();
+    return stm.toString();
+  }
+  
 }

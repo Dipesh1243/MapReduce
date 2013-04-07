@@ -1,6 +1,9 @@
 package cmu.ds.mr.mapred;
 
 import java.io.IOException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -15,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.JobStatus.JobState;
+import cmu.ds.mr.util.Util;
 
 public class JobTracker implements JobSubmissionProtocol{
   private static final Log LOG = LogFactory.getLog(JobTracker.class);
@@ -33,6 +37,12 @@ public class JobTracker implements JobSubmissionProtocol{
   
   private int nextID = 1;
   int totalSubmissions = 0;
+  
+  
+  public JobTracker(){
+    super();
+  }
+  
   
   public JobState submitJob(int JobID){
     if(jobQueue.contains(JobID)){
@@ -153,6 +163,24 @@ public class JobTracker implements JobSubmissionProtocol{
   
   public List<Task> heartbeat(TaskTrackerStatus tasktracker){
     return taskscheduler.assignTasks(tasktracker);
+  }
+  
+  
+  public static void main(String[] args) {
+    if (System.getSecurityManager() == null) {
+        System.setSecurityManager(new SecurityManager());
+    }
+    try {
+        String name = Util.SERVICE_NAME;
+        JobTracker jobtracker = new JobTracker();
+        JobTracker stub =
+            (JobTracker) UnicastRemoteObject.exportObject(jobtracker, 0);
+        Registry registry = LocateRegistry.getRegistry();
+        registry.rebind(name, stub);
+        LOG.info("jobtracker bound");
+    } catch (Exception e) {
+        LOG.error("JobTracker exception:" + Util.stringifyException(e));
+    }
   }
   
   
