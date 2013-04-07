@@ -1,10 +1,15 @@
 package cmu.ds.mr.mapred;
 
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class JobScheduler implements Runnable{
+  
+  private static final Log LOG = LogFactory.getLog(JobScheduler.class);
+  
   
   private Queue<JobInProgress> jobQueue;
   private Queue<Task> taskQueue;
@@ -18,9 +23,22 @@ public class JobScheduler implements Runnable{
 
   @Override
   public void run() {
+
     if(taskQueue.size() < 1){
-      JobInProgress jip = Job
-    }
+      JobInProgress jip = jobQueue.poll();
+
+      if(jip == null){
+        LOG.info("run(): no more job in jobQueue");
+        return;
+      }
+      
+      for(int i = 1; i <= jip.getJobconf().getNumMapTasks(); ++i){
+        
+      }
+
+    }    
+    
+    
     
   }
   

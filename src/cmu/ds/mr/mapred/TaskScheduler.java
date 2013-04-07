@@ -4,7 +4,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-abstract class TaskScheduler {
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+class TaskScheduler {
+  public static final Log LOG = LogFactory.getLog(TaskScheduler.class);
+  
   protected TaskTrackerManager taskTrackerManager;
  
 
@@ -36,8 +41,10 @@ abstract class TaskScheduler {
    * @param taskTracker The TaskTracker for which we're looking for tasks.
    * @return A list of tasks to run on that TaskTracker, possibly empty.
    */
-  public abstract List<Task> assignTasks(TaskTrackerStatus taskTracker)
-    throws IOException;
+  public List<Task> assignTasks(TaskTrackerStatus taskTracker)
+    throws IOException{
+    return null;
+  }
 
   /**
    * Returns a collection of jobs in an order which is specific to 
@@ -45,6 +52,8 @@ abstract class TaskScheduler {
    * @param queueName
    * @return
    */
-  public abstract Collection<JobInProgress> getJobs(String queueName);
+  public Collection<JobInProgress> getJobs(String queueName){
+    return null;
+  }
    
 }

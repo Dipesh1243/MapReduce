@@ -102,6 +102,15 @@ public class JobInProgress {
   }
   
   
+  public synchronized Task obtainNewNonLocalMapTask(TaskTrackerStatus tts){
+    
+    //TODO: need to implement
+    
+    return null;
+  }
+  
+  
+  
   private static class JobInitKillStatus {
     //flag to be set if kill is called
     boolean killed;
