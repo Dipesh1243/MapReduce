@@ -22,7 +22,6 @@ import cmu.ds.mr.util.Util;
 
 public class JobTracker implements JobSubmissionProtocol{
   private static final Log LOG = LogFactory.getLog(JobTracker.class);
-  
 //  public static enum State { INITIALIZING, RUNNING }
 //  State state = State.INITIALIZING;
 
@@ -172,11 +171,14 @@ public class JobTracker implements JobSubmissionProtocol{
     if (System.getSecurityManager() == null) {
         System.setSecurityManager(new SecurityManager());
     }
+     
+    LOG.isInfoEnabled();
+    LOG.info("Starting jobtracker");
     try {
         String name = Util.SERVICE_NAME;
-        JobTracker jobtracker = new JobTracker();
-        JobTracker stub =
-            (JobTracker) UnicastRemoteObject.exportObject(jobtracker, 0);
+        JobSubmissionProtocol jobtracker = new JobTracker();
+        JobSubmissionProtocol stub =
+            (JobSubmissionProtocol) UnicastRemoteObject.exportObject(jobtracker, 0);
         Registry registry = LocateRegistry.getRegistry();
         registry.rebind(name, stub);
         LOG.info("jobtracker bound");

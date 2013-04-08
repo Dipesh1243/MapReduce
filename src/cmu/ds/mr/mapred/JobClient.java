@@ -39,6 +39,9 @@ public class JobClient {
 
   private Properties prop = new Properties();
 
+  
+  public JobClient(){}
+  
   public JobClient(JobConf jobConf) throws FileNotFoundException, IOException, NotBoundException {
     super();
     this.jobConf = jobConf;
@@ -123,12 +126,12 @@ public class JobClient {
   /**
    * Get the root directory of
    * */
-  public String getSystemDir() {
-    return prop.getProperty(Util.SYS_ROOT_DIR);
-  }
-
-  
-  public static void main(String[] args) {
-    JobConf jobconf = new JobConf();
-  }
+//  public String getSystemDir() {
+//    return prop.getProperty(Util.SYS_ROOT_DIR);
+//  }
+//
+//  
+//  public static void main(String[] args) {
+//    JobConf jobconf = new JobConf();
+//  }
 }
