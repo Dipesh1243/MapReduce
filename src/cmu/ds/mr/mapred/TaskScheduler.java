@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
+import cmu.ds.mr.mapred.TaskStatus.TaskType;
 
 class TaskScheduler {
   public static final Log LOG = LogFactory.getLog(TaskScheduler.class);
@@ -50,11 +51,11 @@ class TaskScheduler {
     }
     JobInProgress jip = jobQueue.poll();
     for(int i = 1; i <= jip.getJobconf().getNumMapTasks(); ++i){
-      maptaskQueue.offer(new MapTask(jip.getJobid(), jip.getJobconf(), i, Task.TaskType.MAP));
+      maptaskQueue.offer(new MapTask(jip.getJobid(), jip.getJobconf(), new TaskStatus(i, TaskType.MAP)));
     }
     
     for(int i = 1; i <= jip.getJobconf().getNumReduceTasks(); ++i){
-      reducetaskQueue.offer(new ReduceTask(jip.getJobid(), jip.getJobconf(), i, Task.TaskType.REDUCE));
+      reducetaskQueue.offer(new ReduceTask(jip.getJobid(), jip.getJobconf(), new TaskStatus(i, TaskType.REDUCE)));
     }
     return true;
   }
@@ -66,16 +67,16 @@ class TaskScheduler {
    * @param taskTracker The TaskTracker for which we're looking for tasks.
    * @return A list of tasks to run on that TaskTracker, possibly empty.
    */
-  public synchronized Task assignTask(Task.TaskType type){
+  public synchronized Task assignTask(TaskStatus.TaskType type){
 
-        if(type == Task.TaskType.MAP){
+        if(type == TaskStatus.TaskType.MAP){
           if(reducetaskQueue.isEmpty()){
             if(!addTasks()){
               return null;
             }
           }
           
-          JobID toreducejob = reducetaskQueue.peek().getJobid();
+          JobID toreducejob = reducetaskQueue.peek().getConf();
           if(jobTable.get(toreducejob).getStatus().getMapProgress() == 1){
             return reducetaskQueue.poll();
           }

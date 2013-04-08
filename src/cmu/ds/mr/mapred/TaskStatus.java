@@ -26,17 +26,27 @@ public class TaskStatus implements Serializable {
     }
   };
   
-  private TaskID taskId;
+  private int taskId;
   private TaskState state = TaskState.DEFINE;
   private TaskType type;
+  private int taskNum;
+  private int tryNum;
+  
+
+
+  public TaskStatus(int taskid, TaskType type){
+    this.taskId = taskid;
+    this.type = type;
+    this.state = TaskState.READY;
+  }
   
   
   //private float progress;
   
-  public TaskID getTaskId() {
+  public int getTaskId() {
     return taskId;
   }
-  public void setTaskId(TaskID taskId) {
+  public void setTaskId(int taskId) {
     this.taskId = taskId;
   }
   public TaskState getState() {
@@ -51,5 +61,25 @@ public class TaskStatus implements Serializable {
   public void setType(TaskType type) {
     this.type = type;
   }
+  
+  public int getTaskNum() {
+    return taskNum;
+  }
+
+
+  public void setTaskNum(int taskNum) {
+    this.taskNum = taskNum;
+  }
+
+
+  public int getTryNum() {
+    return tryNum;
+  }
+
+
+  public void setTryNum(int tryNum) {
+    this.tryNum = tryNum;
+  }
+
   
 }

@@ -20,8 +20,8 @@ public class MapTask extends Task {
 
   //private static final Log LOG = LogFactory.getLog(MapTask.class.getName());
   
-  public MapTask(JobConf conf, TaskStatus taskStatus){
-    super(conf, taskStatus);
+  public MapTask(JobID jobid, JobConf conf, TaskStatus taskStatus){
+    super(jobid, conf, taskStatus);
   }
 
   @Override
@@ -32,7 +32,7 @@ public class MapTask extends Task {
     
     // read map input (sorted by key)
     LineRecordReader reader = new LineRecordReader();
-    Map<Long, String> mapInput = reader.readAllRecordInFile(files.get(taskStatus.getTaskId().getTaskNum()));
+    Map<Long, String> mapInput = reader.readAllRecordInFile(files.get(taskStatus.getTaskNum()));
     
     // get user defined mapper
     Mapper mapper = (Mapper) Util.newInstance(jobConf.getMapperclass());

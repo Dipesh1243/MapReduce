@@ -16,14 +16,16 @@ public abstract class Task {
   //private String outputpath;
   
   protected JobConf taskConf;
-  //protected JobID jobid;
+  protected JobID jobid;
+
   // task status include JobId, TaskId (communicate using taskStatus)
   protected TaskStatus taskStatus;  
   //protected int taskID; //id within a job, also means the index of the splited file
   
-  public Task(JobConf conf, TaskStatus taskStatus) {
+  public Task(JobID jobid, JobConf conf, TaskStatus taskStatus) {
     this.taskConf = conf;
     this.taskStatus = taskStatus;
+    this.jobid = jobid;
   }
   
 
@@ -59,5 +61,13 @@ public abstract class Task {
     this.taskStatus = taskStatus;
   }
 
-  
+  public JobID getJobid() {
+    return jobid;
+  }
+
+
+  public void setJobid(JobID jobid) {
+    this.jobid = jobid;
+  }
+
 }

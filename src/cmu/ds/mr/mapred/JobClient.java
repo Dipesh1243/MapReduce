@@ -127,4 +127,8 @@ public class JobClient {
     return prop.getProperty(Util.SYS_ROOT_DIR);
   }
 
+  
+  public static void main(String[] args) {
+    JobConf jobconf = new JobConf();
+  }
 }
