@@ -16,8 +16,8 @@ import cmu.ds.mr.io.MapOutputCollector;
 import cmu.ds.mr.util.Util;
 
 public class ReduceTask extends Task {
-  public ReduceTask(JobID jobid, JobConf conf, TaskStatus taskStatus){
-    super(jobid, conf, taskStatus);
+  public ReduceTask(TaskID taskId, JobConf conf, TaskStatus taskStatus){
+    super(taskId, conf, taskStatus);
   }
 
   @Override

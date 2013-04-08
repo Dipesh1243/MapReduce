@@ -92,12 +92,14 @@ interface InterTrackerProtocol extends Remote {
    * @return a {@link org.apache.hadoop.mapred.HeartbeatResponse} with 
    *         fresh instructions.
    */
-  Task heartbeat(TaskTrackerStatus status, 
-                              boolean restarted, 
-                              boolean initialContact,
-                              boolean acceptNewTasks,
-                              short responseId)
+  Task heartbeat(TaskTrackerStatus status)
     throws IOException;
+//  Task heartbeat(TaskTrackerStatus status, 
+//          boolean restarted, 
+//          boolean initialContact,
+//          boolean acceptNewTasks,
+//          short responseId)
+//throws IOException;
   
   /**
    * The task tracker calls this once, to discern where it can find

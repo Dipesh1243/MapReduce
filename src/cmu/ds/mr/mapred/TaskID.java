@@ -1,5 +1,7 @@
 package cmu.ds.mr.mapred;
 
+import java.io.Serializable;
+
 import cmu.ds.mr.mapred.TaskStatus.TaskType;
 
 
@@ -12,7 +14,7 @@ import cmu.ds.mr.mapred.TaskStatus.TaskType;
  * (Adapted from javadoc)
  * 
  * */
-public class TaskID {
+public class TaskID implements Comparable<TaskID>, Serializable {
   
   private static final String taskStr = "task";
   
@@ -67,6 +69,20 @@ public class TaskID {
     return String.format("%s_%s_%s_%06d_%02d", taskStr, jobId.toString(), type, taskNum, tryNum);
   }
 
+  @Override
+  public int compareTo(TaskID other) {
+    int res = this.jobId.compareTo(other.jobId);
+    if(res == 0) {
+      int res1 = this.taskNum - other.taskNum;
+      if(res1 == 0)
+        return this.tryNum - other.tryNum;
+      else
+        return res1;
+    }
+    else
+      return res;
+  }
+  
   public JobID getJobId() {
     return jobId;
   }
@@ -82,6 +98,7 @@ public class TaskID {
   public int getTryNum() {
     return tryNum;
   }
-  
+
+
   
 }

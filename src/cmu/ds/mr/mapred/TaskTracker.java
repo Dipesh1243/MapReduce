@@ -2,22 +2,27 @@ package cmu.ds.mr.mapred;
 
 
 
+import TaskTracker;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
+import cmu.ds.mr.mapred.TaskStatus.TaskType;
 import cmu.ds.mr.util.Util;
 
 
@@ -38,6 +43,12 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       
       setDaemon(true);
       setName("TaskLauncher for task");
+    }
+    
+    public int getNumFreeSlots() {
+      synchronized(numSlots) {
+        return numSlots;
+      }
     }
 
     public void addToTaskQueue(Task task) {
@@ -92,8 +103,10 @@ public class TaskTracker implements TaskUmbilicalProtocol {
               continue;
             }
           }
-          //got a free slot. launch the task
-          startNewTask(task);
+          
+          // launch the task when we have free slot
+          TaskRunner runner = task.createRunner(TaskTracker.this, task);
+          runner.start();
         } 
         // task tracker finished
         catch (InterruptedException e) { 
@@ -107,8 +120,9 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   }
   
   // running task table
-  private Map<TaskID, Task> tasksMap;
-  private int maxTaskMax;
+  private String taskTrackerName; // taskTrackerName assigned by jobtracker to uniquely identify a taskTracker
+  private Map<TaskID, Task> taskMap;  // running tasks in taskTracker
+  private int mapTaskMax;
   private int redTaskMax;
   private int slotTotal;
   private int numSlots;
@@ -126,13 +140,14 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     this.jobTrackerAddrStr = jobTrackerAddrStr;
     Registry registry = LocateRegistry.getRegistry(jobTrackerAddrStr);
     jobTrackerProxy = (InterTrackerProtocol) registry.lookup(Util.SERVICE_NAME_INTERTRACKER);
+    // TODO get a taskTracker name from jobTracker
     
     localRootDir = (String) conf.getProperties().get(Util.LOCAL_ROOT_DIR);
     
-    maxTaskMax = (Integer) conf.getProperties().get(Util.MAP_TASK_MAX);
+    mapTaskMax = (Integer) conf.getProperties().get(Util.MAP_TASK_MAX);
     redTaskMax = (Integer) conf.getProperties().get(Util.RED_TASK_MAX);
     
-    mapLauncher = new TaskLauncher(maxTaskMax);
+    mapLauncher = new TaskLauncher(mapTaskMax);
     redLauncher = new TaskLauncher(redTaskMax);
     mapLauncher.start();
     redLauncher.start();
@@ -153,21 +168,47 @@ public class TaskTracker implements TaskUmbilicalProtocol {
 
   @Override
   public void done(TaskID taskid) throws IOException {
-    // TODO Auto-generated method stub
+    //taskMap.remove(taskid);
+    // notify JobTracker
     
   }
   
-  private void startTaskTracker() throws InterruptedException {
+  private void startTaskTracker() throws InterruptedException, IOException {
     // TODO get run or stop instruction from JobTracker
     while(true) {
       Thread.sleep(Util.TIME_INTERVAL_HEARTBEAT);
       
+      // build current task tracker status
+      List<TaskStatus> taskStatusList = getAllTaskStatus();
+      int numFreeMapSlots = mapLauncher.getNumFreeSlots();
+      int numFreeRedSlots = redLauncher.getNumFreeSlots();
+      TaskTrackerStatus tts = new TaskTrackerStatus(taskStatusList, numFreeMapSlots, numFreeRedSlots);
       
-    }
+      // transmit heartbeat
+      Task retTask = jobTrackerProxy.heartbeat(tts);
+      // retTask == null means JobTracker has no available task to assign
+      if(retTask != null) {
+        // put it in the taskTracker's table
+        taskMap.put(retTask.taskId, retTask);
+        
+        if(retTask.taskStatus.getType() == TaskType.MAP)
+          mapLauncher.addToTaskQueue(retTask);
+        else
+          redLauncher.addToTaskQueue(retTask);
+      }
+    } 
     
   }
   
-  public static void main(String[] args) throws FileNotFoundException, IOException, NotBoundException {
+  public List<TaskStatus> getAllTaskStatus() {
+    List<TaskStatus> res = new ArrayList<TaskStatus>();
+    for(Entry<TaskID, Task> en : taskMap.entrySet()) {
+      res.add(en.getValue().getTaskStatus());
+    }
+    return res;
+  }
+  
+  public static void main(String[] args) throws FileNotFoundException, IOException, NotBoundException, InterruptedException {
     if(args.length != 1) {
       LOG.error("Usage: TaskTracker <JobTrackerAddress>");
       return;

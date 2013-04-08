@@ -10,16 +10,19 @@ import cmu.ds.mr.conf.JobConf;
 
 public abstract class Task {
   private static final Log LOG = LogFactory.getLog(Task.class);
-  
+
   // JobID is in taskId, use task.getJobid() to get JobId
   // JobID can only be set by new TaskID
   protected TaskID taskId;
-  protected JobConf taskConf;   // task input and output path is defined in the taskConf
-  // taskStatus include state, type and TaskId (a copy of Task.taskId, since we do communicate using taskStatus)
-  protected TaskStatus taskStatus;  
-  
-  //protected int taskID; //id within a job, also means the index of the splited file
-  
+
+  protected JobConf taskConf; // task input and output path is defined in the taskConf
+
+  // taskStatus include state, type and TaskId (a copy of Task.taskId, since we do communicate using
+  // taskStatus)
+  protected TaskStatus taskStatus;
+
+  // protected int taskID; //id within a job, also means the index of the splited file
+
   public Task(TaskID taskId, JobConf taskConf, TaskStatus taskStatus) {
     super();
     this.taskId = taskId;
@@ -27,18 +30,24 @@ public abstract class Task {
     this.taskStatus = taskStatus;
   }
 
-  /** Run this task as a part of the named job.  This method is executed in the
-   * child process and is what invokes user-supplied map, reduce, etc. methods.
-   * @param taskTrackerProxy for progress reports
+  /**
+   * Run this task as a part of the named job. This method is executed in the child process and is
+   * what invokes user-supplied map, reduce, etc. methods.
+   * 
+   * @param taskTrackerProxy
+   *          for progress reports
    */
   public abstract void startTask(JobConf jobConf, TaskUmbilicalProtocol taskTrackerProxy)
-    throws IOException, ClassNotFoundException, InterruptedException, RuntimeException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+          throws IOException, ClassNotFoundException, InterruptedException, RuntimeException,
+          InstantiationException, IllegalAccessException, InvocationTargetException,
+          NoSuchMethodException;
 
-  /** Return an approprate thread runner for this task. 
-   * @param tip TODO*/
-  public abstract TaskRunner createRunner(TaskTracker tracker, 
-      Task task) throws IOException;
-
+  /**
+   * Get a runner (in a different thread) to run the task
+   **/
+  public TaskRunner createRunner(TaskTracker tracker, Task task) throws IOException {
+    return new TaskRunner(task, this.taskConf, tracker);
+  }
 
   public JobConf getConf() {
     return taskConf;
@@ -47,7 +56,6 @@ public abstract class Task {
   public void setConf(JobConf conf) {
     this.taskConf = conf;
   }
-
 
   public TaskStatus getTaskStatus() {
     return taskStatus;
