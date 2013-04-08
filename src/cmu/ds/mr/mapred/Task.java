@@ -1,21 +1,19 @@
 package cmu.ds.mr.mapred;
 
-import TaskRunner;
-import TaskTracker;
-import TaskUmbilicalProtocol;
-
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.io.FileSplit;
+import cmu.ds.mr.mapred.TaskStatus.TaskType;
 
 public abstract class Task {
   private static final Log LOG = LogFactory.getLog(Task.class);
   
-  private String outputpath;
+  //private String outputpath;
   
   protected JobConf taskConf;
   //protected JobID jobid;
@@ -23,33 +21,26 @@ public abstract class Task {
   protected TaskStatus taskStatus;  
   //protected int taskID; //id within a job, also means the index of the splited file
   
-  public Task(String outputpath, JobConf conf, JobID jobid, TaskStatus taskStatus, int taskID) {
-    super();
-    this.outputpath = outputpath;
+  public Task(JobConf conf, TaskStatus taskStatus) {
     this.taskConf = conf;
     this.taskStatus = taskStatus;
   }
   
+
   /** Run this task as a part of the named job.  This method is executed in the
    * child process and is what invokes user-supplied map, reduce, etc. methods.
-   * @param umbilical for progress reports
+   * @param taskTrackerProxy for progress reports
    */
-  public abstract void run(JobConf job, TaskUmbilicalProtocol umbilical)
-    throws IOException, ClassNotFoundException, InterruptedException;
+  public abstract void startTask(JobConf jobConf, TaskUmbilicalProtocol taskTrackerProxy)
+    throws IOException, ClassNotFoundException, InterruptedException, RuntimeException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+      
 
 
   /** Return an approprate thread runner for this task. 
    * @param tip TODO*/
-  public abstract TaskRunner createRunner(TaskTracker tracker, 
-      TaskTracker.TaskInProgress tip) throws IOException;
+//  public abstract TaskRunner createRunner(TaskTracker tracker, 
+//      TaskTracker.TaskInProgress tip) throws IOException;
 
-  public String getOutputpath() {
-    return outputpath;
-  }
-
-  public void setOutputpath(String outputpath) {
-    this.outputpath = outputpath;
-  }
 
   public JobConf getConf() {
     return taskConf;

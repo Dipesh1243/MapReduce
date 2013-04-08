@@ -11,9 +11,10 @@ import java.util.TreeMap;
  * 
  * */
 public class LineRecordReader {
-
+  
+  
   /**
-   * Read records as input to feed Mapper
+   * Read records as input to feed Mapper. Records sorted.
    * 
    * @return records<posInBytes, lineStr>
    * */

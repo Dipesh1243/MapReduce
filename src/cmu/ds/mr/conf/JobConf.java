@@ -18,6 +18,7 @@ public class JobConf implements Serializable {
 
   private String inpath;
   private String outpath;
+  private String mapOutPath;
   private String jobTrackerAddr;
   private int numReduceTasks;
   private int numMapTasks;
@@ -112,6 +113,14 @@ public class JobConf implements Serializable {
 
   public void setResources(ArrayList<Object> resources) {
     this.resources = resources;
+  }
+
+  public String getMapOutPath() {
+    return mapOutPath;
+  }
+
+  public void setMapOutPath(String mapOutPath) {
+    this.mapOutPath = mapOutPath;
   }
 
   public String getInpath() {

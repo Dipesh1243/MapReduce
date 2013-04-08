@@ -1,14 +1,18 @@
 package cmu.ds.mr.mapred;
 
-import Log;
-import TaskTracker;
+
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import cmu.ds.mr.util.Util;
 
 
 public class TaskTracker implements TaskUmbilicalProtocol {
@@ -17,22 +21,23 @@ public class TaskTracker implements TaskUmbilicalProtocol {
           LogFactory.getLog(TaskTracker.class);
   
   private class TaskLauncher extends Thread {
-    private int numSlots;
+    private Integer numSlots;
     private final int maxNumSlots;
-    private List<TaskInProgress> tasksQueue;
+    private List<Task> tasksQueue;
 
     public TaskLauncher(int numSlots) {
       this.numSlots = numSlots;
       maxNumSlots = numSlots;
-      tasksQueue = new LinkedList<TaskInProgress>();
-      //setDaemon(true);
+      tasksQueue = new LinkedList<Task>();
+      
+      setDaemon(true);
       setName("TaskLauncher for task");
     }
 
-    public void addToTaskQueue(LaunchTaskAction action) {
+    public void addToTaskQueue(Task task) {
       synchronized (tasksQueue) {
-        TaskInProgress tip = registerTask(action, this);
-        tasksQueue.add(tip);
+        //TaskInProgress tip = registerTask(action, this);
+        tasksQueue.add(task);
         tasksQueue.notifyAll();
       }
     }
@@ -43,9 +48,9 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     
     public void addFreeSlot() {
       synchronized (numSlots) {
-        numSlots.set(numSlots.get() + 1);
-        assert (numSlots.get() <= maxNumSlots);
-        LOG.info("addFreeSlot : current free slots : " + numSlots.get());
+        numSlots++;
+        
+        LOG.info("addFreeSlot : current free slots : " + numSlots);
         numSlots.notifyAll();
       }
     }
@@ -54,50 +59,70 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       //while (!Thread.interrupted()) {
       while (true) {
         try {
-          TaskInProgress tip;
+          Task task;
           synchronized (tasksQueue) {
             while (tasksQueue.isEmpty()) {
               tasksQueue.wait();
             }
-            //get the TIP
-            tip = tasksQueue.remove(0);
-            LOG.info("Trying to launch : " + tip.getTask().getTaskID());
+            // removeFirst
+            task = tasksQueue.remove(0);
+            LOG.info("Launching : " + task.taskStatus.getTaskId());
           }
           //wait for a slot to run
           synchronized (numSlots) {
-            while (numSlots.get() == 0) {
+            while (numSlots == 0) {
               numSlots.wait();
             }
-            LOG.info("In TaskLauncher, current free slots : " + numSlots.get()+
-                " and trying to launch "+tip.getTask().getTaskID());
-            numSlots.set(numSlots.get() - 1);
-            assert (numSlots.get() >= 0);
+            LOG.info("In TaskLauncher, current free slots : " + numSlots +
+                " and trying to launch "+ task.taskStatus.getTaskId());
+            numSlots--;
+            assert numSlots >= 0;
           }
-          synchronized (tip) {
-            //to make sure that there is no kill task action for this
-            if (tip.getRunState() != TaskStatus.State.UNASSIGNED &&
-                tip.getRunState() != TaskStatus.State.FAILED_UNCLEAN &&
-                tip.getRunState() != TaskStatus.State.KILLED_UNCLEAN) {
-              //got killed externally while still in the launcher queue
+          // check for valid tasks
+          synchronized (task) {
+            if (task.taskStatus.getState() == TaskStatus.TaskState.FAILED &&
+                    task.taskStatus.getState() == TaskStatus.TaskState.KILLED) {
               addFreeSlot();
               continue;
             }
-            tip.slotTaken = true;
           }
           //got a free slot. launch the task
-          startNewTask(tip);
+          startNewTask(task);
         } 
         // task tracker finished
         catch (InterruptedException e) { 
           return; 
         } 
         catch (Throwable th) {
-          LOG.error("TaskLauncher error " + StringUtils.stringifyException(th));
+          LOG.error("TaskLauncher error " + Util.stringifyException(th));
         }
       }
     }
   }
-
+  
+  // running task table
+  private Map<TaskID, Task> tasksMap;
+  private int mapTotal;
+  private int redTotal;
+  private int slotTotal;
+  private int numSlots;
+  
+  // JobTracker stub (using RMI)
+  private InterTrackerProtocol jobTrackerProcy; 
+  // Map and reduce launcher (separate daemon process)
+  private TaskLauncher mapLauncher;
+  private TaskLauncher redLauncher;
+  
+  
+  public TaskTracker() {
+    
+    
+    mapLauncher = new TaskLauncher(maxCurrentMapTasks);
+    redLauncher = new TaskLauncher(maxCurrentReduceTasks);
+    mapLauncher.start();
+    redLauncher.start();
+  }
+ 
   @Override
   public boolean statusUpdate(TaskID taskId, TaskStatus taskStatus) throws IOException,
           InterruptedException {

@@ -1,7 +1,10 @@
 package cmu.ds.mr.util;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 public class Util {
   
@@ -25,6 +28,12 @@ public class Util {
     e.printStackTrace(wrt);
     wrt.close();
     return stm.toString();
+  }
+
+  
+  public static Object newInstance(Class<?> theClass) throws RuntimeException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    Constructor<?> constructor = theClass.getConstructor();
+    return constructor.newInstance();
   }
   
 }

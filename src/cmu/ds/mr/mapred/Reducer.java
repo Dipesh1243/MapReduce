@@ -12,7 +12,7 @@ import cmu.ds.mr.io.OutputCollector;
  * */
 public interface Reducer<K1, V1, K2, V2> {
 
-  void reduce(K1 key, Iterator<V1> values, OutputCollector<K2, V2> output, Reporter reporter)
+  void reduce(K1 key, Iterator<V1> values, OutputCollector<K2, V2> output)
           throws IOException;
 
 }
