@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
+import cmu.ds.mr.mapred.TaskStatus.TaskState;
 import cmu.ds.mr.mapred.TaskStatus.TaskType;
 
 class TaskScheduler {
@@ -51,11 +52,13 @@ class TaskScheduler {
     }
     JobInProgress jip = jobQueue.poll();
     for(int i = 1; i <= jip.getJobconf().getNumMapTasks(); ++i){
-      maptaskQueue.offer(new MapTask(jip.getJobid(), jip.getJobconf(), new TaskStatus(i, TaskType.MAP)));
+      TaskID tid = new TaskID(jip.getJobid(), TaskType.MAP, i, 1);
+      maptaskQueue.offer(new MapTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.MAP)));
     }
     
     for(int i = 1; i <= jip.getJobconf().getNumReduceTasks(); ++i){
-      reducetaskQueue.offer(new ReduceTask(jip.getJobid(), jip.getJobconf(), new TaskStatus(i, TaskType.REDUCE)));
+      TaskID tid = new TaskID(jip.getJobid(), TaskType.REDUCE, i, 1);
+      reducetaskQueue.offer(new ReduceTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.REDUCE)));
     }
     return true;
   }
@@ -76,7 +79,7 @@ class TaskScheduler {
             }
           }
           
-          JobID toreducejob = reducetaskQueue.peek().getConf();
+          JobID toreducejob = reducetaskQueue.peek().getJobid();
           if(jobTable.get(toreducejob).getStatus().getMapProgress() == 1){
             return reducetaskQueue.poll();
           }

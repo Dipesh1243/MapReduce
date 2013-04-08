@@ -20,8 +20,8 @@ public class MapTask extends Task {
 
   //private static final Log LOG = LogFactory.getLog(MapTask.class.getName());
   
-  public MapTask(TaskID taskId, JobConf conf, TaskStatus taskStatus){
-    super(taskId, conf, taskStatus);
+  public MapTask(TaskID taskid, JobConf taskconf, TaskStatus taskStatus){
+    super(taskid, taskconf, taskStatus);
   }
 
   @Override

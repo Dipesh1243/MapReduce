@@ -16,8 +16,9 @@ import cmu.ds.mr.io.MapOutputCollector;
 import cmu.ds.mr.util.Util;
 
 public class ReduceTask extends Task {
-  public ReduceTask(TaskID taskId, JobConf conf, TaskStatus taskStatus){
-    super(taskId, conf, taskStatus);
+  
+  public ReduceTask(TaskID taskid, JobConf taskconf, TaskStatus taskStatus){
+    super(taskid, taskconf, taskStatus);
   }
 
   @Override
@@ -25,5 +26,11 @@ public class ReduceTask extends Task {
           ClassNotFoundException, InterruptedException, RuntimeException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     
 
+  }
+
+  @Override
+  public TaskRunner createRunner(TaskTracker tracker, Task task) throws IOException {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
