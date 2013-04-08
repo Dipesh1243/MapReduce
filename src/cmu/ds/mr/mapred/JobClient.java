@@ -124,7 +124,7 @@ public class JobClient {
    * Get the root directory of
    * */
   public String getSystemDir() {
-    return prop.getProperty(Util.SYS_ROOT_DIR);
+    return prop.getProperty(Util.CONFIG_PATH);
   }
 
   
