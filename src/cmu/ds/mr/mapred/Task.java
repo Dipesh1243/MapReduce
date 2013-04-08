@@ -7,27 +7,25 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
-import cmu.ds.mr.io.FileSplit;
-import cmu.ds.mr.mapred.TaskStatus.TaskType;
 
 public abstract class Task {
   private static final Log LOG = LogFactory.getLog(Task.class);
   
-  //private String outputpath;
-  
-  protected JobConf taskConf;
-  protected JobID jobid;
-
-  // task status include JobId, TaskId (communicate using taskStatus)
+  // JobID is in taskId, use task.getJobid() to get JobId
+  // JobID can only be set by new TaskID
+  protected TaskID taskId;
+  protected JobConf taskConf;   // task input and output path is defined in the taskConf
+  // taskStatus include state, type and TaskId (a copy of Task.taskId, since we do communicate using taskStatus)
   protected TaskStatus taskStatus;  
+  
   //protected int taskID; //id within a job, also means the index of the splited file
   
-  public Task(JobID jobid, JobConf conf, TaskStatus taskStatus) {
-    this.taskConf = conf;
+  public Task(TaskID taskId, JobConf taskConf, TaskStatus taskStatus) {
+    super();
+    this.taskId = taskId;
+    this.taskConf = taskConf;
     this.taskStatus = taskStatus;
-    this.jobid = jobid;
   }
-  
 
   /** Run this task as a part of the named job.  This method is executed in the
    * child process and is what invokes user-supplied map, reduce, etc. methods.
@@ -35,13 +33,11 @@ public abstract class Task {
    */
   public abstract void startTask(JobConf jobConf, TaskUmbilicalProtocol taskTrackerProxy)
     throws IOException, ClassNotFoundException, InterruptedException, RuntimeException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException;
-      
-
 
   /** Return an approprate thread runner for this task. 
    * @param tip TODO*/
-//  public abstract TaskRunner createRunner(TaskTracker tracker, 
-//      TaskTracker.TaskInProgress tip) throws IOException;
+  public abstract TaskRunner createRunner(TaskTracker tracker, 
+      Task task) throws IOException;
 
 
   public JobConf getConf() {
@@ -62,12 +58,7 @@ public abstract class Task {
   }
 
   public JobID getJobid() {
-    return jobid;
-  }
-
-
-  public void setJobid(JobID jobid) {
-    this.jobid = jobid;
+    return taskId.getJobId();
   }
 
 }

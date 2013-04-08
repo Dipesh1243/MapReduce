@@ -50,4 +50,9 @@ public class MapTask extends Task {
     // notify taskTracker
     taskTrackerProxy.done(taskStatus.getTaskId());
   }
+
+  @Override
+  public TaskRunner createRunner(TaskTracker tracker, Task task) throws IOException {
+    return new TaskRunner(task, this.taskConf, tracker);
+  }
 }

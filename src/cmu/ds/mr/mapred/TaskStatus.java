@@ -8,6 +8,11 @@ import java.io.Serializable;
  * */
 public class TaskStatus implements Serializable {
   
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+
   public static enum TaskState {
     SUCCEEDED, WAITING, DEFINE, RUNNING, READY, FAILED, KILLED
   };
@@ -26,42 +31,33 @@ public class TaskStatus implements Serializable {
     }
   };
   
-  private int taskId;
+  // this taskId is read-only. Set type, taskNum, tryNum in this class
+  private TaskID taskId; 
+  
   private TaskState state = TaskState.DEFINE;
   private TaskType type;
   private int taskNum;
   private int tryNum;
   
-
-
-  public TaskStatus(int taskid, TaskType type){
-    this.taskId = taskid;
-    this.type = type;
-    this.state = TaskState.READY;
-  }
-  
-  
   //private float progress;
   
-  public int getTaskId() {
-    return taskId;
-  }
-  public void setTaskId(int taskId) {
+  public TaskStatus(TaskID taskId, TaskState state, TaskType type) {
+    super();
     this.taskId = taskId;
-  }
-  public TaskState getState() {
-    return state;
-  }
-  public void setState(TaskState state) {
     this.state = state;
-  }
-  public TaskType getType() {
-    return type;
-  }
-  public void setType(TaskType type) {
     this.type = type;
   }
   
+  
+  public TaskID getTaskId() {
+    return taskId;
+  }
+
+  public void setTaskId(TaskID taskId) {
+    this.taskId = taskId;
+  }
+
+
   public int getTaskNum() {
     return taskNum;
   }
@@ -72,10 +68,23 @@ public class TaskStatus implements Serializable {
   }
 
 
+  public TaskState getState() {
+    return state;
+  }
+  
+  public void setState(TaskState state) {
+    this.state = state;
+  }
+  public TaskType getType() {
+    return type;
+  }
+  public void setType(TaskType type) {
+    this.type = type;
+  }
+
   public int getTryNum() {
     return tryNum;
   }
-
 
   public void setTryNum(int tryNum) {
     this.tryNum = tryNum;

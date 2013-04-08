@@ -16,6 +16,8 @@ public class TaskID {
   
   private static final String taskStr = "task";
   
+  // all the field is read-only and can only be initialized in constructor.
+  // Do NOT set in this class other than constructor!
   private JobID jobId;
   private TaskType type;
   private int taskNum;
@@ -29,6 +31,37 @@ public class TaskID {
     this.taskNum = taskNum;
     this.tryNum = tryNum;
   }
+  
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
+    result = prime * result + taskNum;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    TaskID other = (TaskID) obj;
+    if (jobId == null) {
+      if (other.jobId != null)
+        return false;
+    } else if (!jobId.equals(other.jobId))
+      return false;
+    if (taskNum != other.taskNum)
+      return false;
+    return true;
+  }
+
+
 
   public String toString() {
     return String.format("%s_%s_%s_%06d_%02d", taskStr, jobId.toString(), type, taskNum, tryNum);
@@ -37,33 +70,17 @@ public class TaskID {
   public JobID getJobId() {
     return jobId;
   }
-
-  public void setJobId(JobID jobId) {
-    this.jobId = jobId;
-  }
-
+  
   public TaskType getType() {
     return type;
-  }
-
-  public void setType(TaskType type) {
-    this.type = type;
   }
 
   public int getTaskNum() {
     return taskNum;
   }
 
-  public void setTaskNum(int taskNum) {
-    this.taskNum = taskNum;
-  }
-
   public int getTryNum() {
     return tryNum;
-  }
-
-  public void setTryNum(int tryNum) {
-    this.tryNum = tryNum;
   }
   
   

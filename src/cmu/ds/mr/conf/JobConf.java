@@ -1,5 +1,8 @@
 package cmu.ds.mr.conf;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,11 @@ public class JobConf implements Serializable {
   
   private Properties properties = new Properties();
 
+  
+  // read configure file in 
+  public JobConf() throws FileNotFoundException, IOException {
+    properties.load(new FileInputStream(Util.CONFIG_PATH));
+  }
   
   public List<FileSplit> getSplitFiles() {
     return splitFiles;
