@@ -200,7 +200,6 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol{
     
     
     //for test
-      LOG.info(""+ status.getNumFreeSlots() +" " + status.getNumFreeSlots());
       if(status.getNumFreeSlots() > 0){
         return taskscheduler.assignTask();
       }
@@ -236,11 +235,11 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol{
         name = Util.SERVICE_NAME_INTERTRACKER;
         registry.rebind(name, (InterTrackerProtocol)stub);
         
-        System.out.println("ComputeEngine bound");
+        System.out.println("SERVICE bound");
 
 //        LOG.info("jobtracker bound");
     } catch (Exception e) {
-      System.err.println("ComputeEngine exception:");
+      System.err.println("SERVICE bound exception:");
       e.printStackTrace();
 //        LOG.error("JobTracker exception:" + Util.stringifyException(e));
     }

@@ -194,7 +194,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       
       // retTask == null means JobTracker has no available task to assign
       if(retTask != null) {
-        LOG.info("get new task id: " + retTask.taskId.getTaskNum());
+        LOG.info("get new task id: " + retTask.taskId.toString());
         // put it in the taskTracker's table
         taskMap.put(retTask.taskId, retTask);
         

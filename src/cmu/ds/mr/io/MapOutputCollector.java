@@ -24,6 +24,9 @@ public class MapOutputCollector implements OutputCollector<String, Integer> {
   private String basePath;
 
   public MapOutputCollector(String basePath, int nred) throws IOException {
+    
+    LOG.setInfo(false);
+    
     this.basePath = basePath;
     File file = new File(basePath);
     if(!file.exists())
