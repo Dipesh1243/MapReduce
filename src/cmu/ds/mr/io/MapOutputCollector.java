@@ -40,6 +40,8 @@ public class MapOutputCollector implements OutputCollector<String, Integer> {
   public void collect(String key, Integer value) throws IOException {
     // Assume key is String
     int k = key.toString().hashCode() % numRed;
+    if(k < 0)
+      k += numRed;
     outlist.get(k).put(key, value);
     
     LOG.info(String.format("MapOutput: key %s\tval %s", key, value));
