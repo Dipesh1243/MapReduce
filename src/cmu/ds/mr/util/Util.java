@@ -25,7 +25,7 @@ public class Util {
   public static final String SERVICE_NAME_INTERTRACKER = "InterTrackerProtocol";
   
   public static final String CONFIG_PATH = "./conf/mapred.conf";
-
+  public static final int MAX_TRY = 3;
   
   
   public static String stringifyException(Throwable e) {

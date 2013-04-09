@@ -172,6 +172,32 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol{
   @Override
   public Task heartbeat(TaskTrackerStatus status) throws IOException {
     // TODO Auto-generated method stub
+    synchronized(jobTable){
+      List<TaskStatus> tasks = status.getTaskStatusList();
+      for(TaskStatus taskstatus: tasks){
+        JobID jid = taskstatus.getTaskId().getJobId();
+        TaskState tstate = taskstatus.getState();
+        TaskType ttype = taskstatus.getType();
+        if(tstate == TaskState.SUCCEEDED){
+          if(ttype == TaskType.MAP){
+            float currentprogress = jobTable.get(jid).getStatus().getMapProgress();
+            int num = jobTable.get(jid).getJobconf().getNumMapTasks();
+            jobTable.get(jid).getStatus().setMapProgress(currentprogress + 1 / (float)num);
+          }
+          else if(ttype == TaskType.REDUCE){
+            float currentprogress = jobTable.get(jid).getStatus().getReduceProgress();
+            int num = jobTable.get(jid).getJobconf().getNumReduceTasks();
+            jobTable.get(jid).getStatus().setReduceProgress(currentprogress + 1 / (float)num);
+          } 
+        }
+        if(tstate == TaskState.FAILED){
+          LOG.info("task:" + tasks.toString() + "failed");
+          if(!taskscheduler.recoverFailedTask(taskstatus)){
+            LOG.info("Cannot add the failed task to queue.");
+          }
+        }
+      }
+    
     
     //for test
 //    if(status.getNumFreeRedSlots() > 0){
@@ -180,7 +206,8 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol{
 //    if(status.getNumFreeMapSlots() > 0){
 //      return taskscheduler.assignTaskbasedonType(TaskType.MAP);
 //    }
-    return taskscheduler.assignTask();
+      return taskscheduler.assignTask();
+    }
 //    TaskID tid = new TaskID(null, TaskType.MAP, 85, 1);
 //        return new MapTask(tid, null, new TaskStatus(tid, TaskState.READY, TaskType.MAP));
     
