@@ -25,7 +25,7 @@ public class JobTracker implements JobSubmissionProtocol{
 
   private Queue<JobInProgress> jobQueue = new LinkedList<JobInProgress>();
   private Map<JobID, JobInProgress> jobTable = new TreeMap<JobID, JobInProgress>();
-  private Map<TaskTracker, Boolean> tasktrackers;
+
   
   
   private TaskScheduler taskscheduler = new TaskScheduler(jobQueue, jobTable);
@@ -38,15 +38,16 @@ public class JobTracker implements JobSubmissionProtocol{
   
   public JobTracker(){
     super();
+    this.jobIdentifier = "jobtracker";
   }
   
   
-  public JobState submitJob(int JobID){
-    if(jobQueue.contains(JobID)){
-      return null;
-    }
-    return null;
-  }
+//  public JobState submitJob(int JobID){
+//    if(jobQueue.contains(JobID)){
+//      return null;
+//    }
+//    return null;
+//  }
 
 
   @Override
@@ -62,6 +63,7 @@ public class JobTracker implements JobSubmissionProtocol{
     if(jobTable.containsKey(jobid)){
       return jobTable.get(jobid).getStatus();
     }
+
     JobInProgress job = new JobInProgress(jobid, this, jobConf);
     
     //TODO: need to check Queue later
@@ -80,7 +82,7 @@ public class JobTracker implements JobSubmissionProtocol{
 
     synchronized (jobTable) {
         jobTable.put(jobId, job);
-        job.getStatus().setState(JobState.WAITING);
+        job.getStatus().setState(JobState.RUNNING);
 //        LOG.info("addJob(): finish adding job #" + job.getJobid().getId());
     }
     return job.getStatus();

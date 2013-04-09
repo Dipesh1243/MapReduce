@@ -2,10 +2,13 @@ package cmu.ds.mr.mapred;
 
 
 
+import java.io.Serializable;
+
 import cmu.ds.mr.conf.JobConf;
+import cmu.ds.mr.mapred.JobStatus.JobState;
 import cmu.ds.mr.util.Log;
 
-public class JobInProgress {
+public class JobInProgress implements Serializable{
   static final Log LOG = new Log("JobInProgress.class");
   
   private JobID jobid;
@@ -42,6 +45,8 @@ public class JobInProgress {
     this.jobid = jobid;
     this.jobtracker = tracker;
     this.jobconf = jobconf;
+    this.status = new JobStatus(jobid, JobState.READY, 0, 0,
+            0, 0);
     
     this.startTime = System.currentTimeMillis();
     

@@ -94,7 +94,7 @@ public class JobClient {
       JobStatus jobStatusNew = jobTrackerProxy.getJobStatus(jid);
       job.setJobStatus(jobStatusNew);
 
-      String logstr = String.format("%s: map %.1f\\%\treduce %.1f\\%", jid.toString(),
+      String logstr = String.format("%s: map %.1f\treduce %.1f", jid.toString(),
               job.mapProgress(), job.reduceProgress());
       if(!logstr.equals(logstrPre)) {
         LOG.info(logstr);

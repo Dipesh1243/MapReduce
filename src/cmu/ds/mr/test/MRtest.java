@@ -45,6 +45,8 @@ public class MRtest {
     conf.setReducerClass(Reduce.class);
     conf.setInpath("test.txt");
     conf.setJobTrackerAddr("gavin-X220");
+    conf.setInpath("data/abstract.txt");
+    conf.setOutpath("data/out/");
     return conf;
   }
 }
