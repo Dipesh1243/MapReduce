@@ -1,5 +1,6 @@
 package cmu.ds.mr.conf;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -146,7 +147,13 @@ public class JobConf implements Serializable {
     return outpath;
   }
 
-  public void setOutpath(String outpath) {
+  public void setOutpath(String outpath) throws IOException {
+    File f = new File(outpath);
+    if(f.exists()) {
+      LOG.error("Output file exists!");
+      throw new IOException("Output file exists!");
+    }
+      
     this.outpath = outpath;
   }
 

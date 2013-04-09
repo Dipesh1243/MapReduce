@@ -18,8 +18,7 @@ public class Util {
   public static final String NUM_RED_TASK = "mapred.red.tasks";
   public static final String JOB_NAME = "mapred.job.name";
   
-  public static final String MAP_TASK_MAX = "mapred.tasktracker.map.tasks.maximum";
-  public static final String RED_TASK_MAX = "mapred.tasktracker.map.tasks.maximum";
+  public static final String NUM_TASK_MAX = "mapred.tasktracker.tasks.maximum";
   
   public static final String SERVICE_NAME = "JobSubmissionProtocol";
   public static final String SERVICE_NAME_INTERTRACKER = "InterTrackerProtocol";

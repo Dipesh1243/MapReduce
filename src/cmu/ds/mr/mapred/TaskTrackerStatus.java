@@ -12,28 +12,21 @@ public class TaskTrackerStatus implements Serializable {
 
   private List<TaskStatus> taskStatusList;
 
-  private int numFreeMapSlots;
-
-  private int numFreeRedSlots;
+  private int numFreeSlots;
 
   // set only through constructor
-  public TaskTrackerStatus(List<TaskStatus> taskStatusList, int numFreeMapSlots, int numFreeRedSlots) {
+  public TaskTrackerStatus(List<TaskStatus> taskStatusList, int numFreeSlots) {
     super();
     this.taskStatusList = taskStatusList;
-    this.numFreeMapSlots = numFreeMapSlots;
-    this.numFreeRedSlots = numFreeRedSlots;
+    this.numFreeSlots = numFreeSlots;
   }
 
   public List<TaskStatus> getTaskStatusList() {
     return taskStatusList;
   }
 
-  public int getNumFreeMapSlots() {
-    return numFreeMapSlots;
-  }
-
-  public int getNumFreeRedSlots() {
-    return numFreeRedSlots;
+  public int getNumFreeSlots() {
+    return numFreeSlots;
   }
 
 }
