@@ -10,8 +10,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import cmu.ds.mr.util.Log;
+
 public class RedOutputCollector implements OutputCollector<String, Integer> {
 
+  public static final Log LOG =
+          new Log("RedOutputCollector.class");
+  
   private Map<String, Integer> outlist;
 
   private String basePath;
@@ -31,12 +36,14 @@ public class RedOutputCollector implements OutputCollector<String, Integer> {
   public void collect(String key, Integer value) throws IOException {
     // Assume key is String
     outlist.put(key, value);
+    
+    LOG.info(String.format("key %s\tval %s", key, value));
   }
 
   public void writeToDisk() throws IOException {
     String name = String.format("part-%05d", taskNum);
     BufferedWriter bw = new BufferedWriter(
-            new FileWriter(basePath + File.pathSeparatorChar + name));
+            new FileWriter(basePath + File.separator + name));
     try {
       for (Entry<String, Integer> en : outlist.entrySet()) {
         bw.write(String.format("%s\t%d\n", en.getKey(), en.getValue()));
@@ -44,6 +51,8 @@ public class RedOutputCollector implements OutputCollector<String, Integer> {
     } finally {
       bw.close();
     }
+    
+    LOG.info("write to disk finished");
   }
 
 }
