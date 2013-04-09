@@ -186,7 +186,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       List<TaskStatus> taskStatusList = getAllTaskStatus();
       TaskTrackerStatus tts = new TaskTrackerStatus(taskStatusList, numFreeSlots.get());
       
-      LOG.debug(String.format("#freeSlot:%d", numFreeSlots.get()));
+      //LOG.debug(String.format("#freeSlot:%d", numFreeSlots.get()));
       
       // transmit heartbeat
       Task retTask = jobTrackerProxy.heartbeat(tts);

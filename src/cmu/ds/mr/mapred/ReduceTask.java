@@ -68,9 +68,12 @@ public class ReduceTask extends Task {
     String line;
     
     for(File f : mapFiles) {
+      if(f.getName().startsWith("."))
+        continue;
+      
       File[] redFiles = f.listFiles();
       for(File rf : redFiles) {
-        if(rf.getName().equals(taskNum)) {
+        if(rf.getName().equals(taskNum + "")) {
           // read whole file from each map output
           br = new BufferedReader(new FileReader(rf));
           
