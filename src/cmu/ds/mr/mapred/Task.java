@@ -3,13 +3,12 @@ package cmu.ds.mr.mapred;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
+import cmu.ds.mr.util.Log;
 
 public abstract class Task {
-  private static final Log LOG = LogFactory.getLog(Task.class);
+  private static final Log LOG = new Log("Task.class");
 
   // JobID is in taskId, use task.getJobid() to get JobId
   // JobID can only be set by new TaskID

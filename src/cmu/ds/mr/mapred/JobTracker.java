@@ -13,15 +13,13 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.JobStatus.JobState;
+import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
 public class JobTracker implements JobSubmissionProtocol{
-  private static final Log LOG = LogFactory.getLog(JobTracker.class);
+  private static final Log LOG = new Log("JobTracker.class");
 //  public static enum State { INITIALIZING, RUNNING }
 //  State state = State.INITIALIZING;
 
@@ -171,7 +169,7 @@ public class JobTracker implements JobSubmissionProtocol{
     if (System.getSecurityManager() == null) {
         System.setSecurityManager(new SecurityManager());
     }
-     
+    
 //    LOG.isInfoEnabled();
 //    LOG.info("Starting jobtracker");
     try {
@@ -179,13 +177,15 @@ public class JobTracker implements JobSubmissionProtocol{
         JobSubmissionProtocol jobtracker = new JobTracker();
         JobSubmissionProtocol stub =
             (JobSubmissionProtocol) UnicastRemoteObject.exportObject(jobtracker, 0);
-        Registry registry = LocateRegistry.getRegistry();
+        Registry registry = LocateRegistry.getRegistry(3944);
 
         registry.rebind(name, stub);
-        
+        System.out.println("ComputeEngine bound");
+
 //        LOG.info("jobtracker bound");
     } catch (Exception e) {
-        
+      System.err.println("ComputeEngine exception:");
+      e.printStackTrace();
 //        LOG.error("JobTracker exception:" + Util.stringifyException(e));
     }
   }

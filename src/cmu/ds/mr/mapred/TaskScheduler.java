@@ -7,15 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.TaskStatus.TaskState;
 import cmu.ds.mr.mapred.TaskStatus.TaskType;
+import cmu.ds.mr.util.Log;
 
 class TaskScheduler {
-  public static final Log LOG = LogFactory.getLog(TaskScheduler.class);
+  public static final Log LOG = new Log("TaskScheduler.class");
   
   private Queue<JobInProgress> jobQueue;
   private Map<JobID, JobInProgress> jobTable;

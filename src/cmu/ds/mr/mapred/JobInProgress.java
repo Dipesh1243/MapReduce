@@ -1,12 +1,12 @@
 package cmu.ds.mr.mapred;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 
 import cmu.ds.mr.conf.JobConf;
+import cmu.ds.mr.util.Log;
 
 public class JobInProgress {
-  static final Log LOG = LogFactory.getLog(JobInProgress.class);
+  static final Log LOG = new Log("JobInProgress.class");
   
   private JobID jobid;
   private JobStatus status;

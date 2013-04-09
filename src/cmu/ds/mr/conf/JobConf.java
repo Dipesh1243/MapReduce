@@ -8,14 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.io.FileSplit;
+import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
 public class JobConf implements Serializable {
-  private static final Log LOG = LogFactory.getLog(JobConf.class);
+  private static final Log LOG = new Log("JobConf.class");
 
   private ArrayList<Object> resources = new ArrayList<Object>();
 

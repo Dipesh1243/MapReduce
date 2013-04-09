@@ -15,19 +15,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.TaskStatus.TaskState;
 import cmu.ds.mr.mapred.TaskStatus.TaskType;
+import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
 
 public class TaskTracker implements TaskUmbilicalProtocol {
   
   public static final Log LOG =
-          LogFactory.getLog(TaskTracker.class);
+          new Log("TaskTracker.class");
   
   private class TaskLauncher extends Thread {
     private Integer numSlots; // num of free slots

@@ -16,12 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.io.FileSplit;
 import cmu.ds.mr.io.FileSplitter;
+import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
 /**
@@ -29,7 +27,7 @@ import cmu.ds.mr.util.Util;
  * */
 public class JobClient {
 
-  private static final Log LOG = LogFactory.getLog(JobClient.class);
+  private static final Log LOG = new Log("JobClient.class");
 
   private JobConf jobConf;
   private JobSubmissionProtocol jobTrackerProxy;

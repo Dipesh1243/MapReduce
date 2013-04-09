@@ -1,12 +1,11 @@
 package cmu.ds.mr.mapred;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import cmu.ds.mr.conf.JobConf;
+import cmu.ds.mr.util.Log;
 
 /**
  * Class for running mappaer and reducer in a separate thread
@@ -14,7 +13,7 @@ import cmu.ds.mr.conf.JobConf;
  * */
 public class TaskRunner extends Thread {
   
-  public static final Log LOG = LogFactory.getLog(TaskRunner.class);
+  public static final Log LOG = new Log("TaskRunner.class");
   
   private Task task;
   private JobConf taskConf;
