@@ -16,21 +16,19 @@ public class TaskRunner extends Thread {
   public static final Log LOG = new Log("TaskRunner.class");
   
   private Task task;
-  private JobConf taskConf;
   private TaskTracker taskTrackerProxy;
   
   
-  public TaskRunner(Task task, JobConf taskConf, TaskTracker taskTrackerProxy) {
+  public TaskRunner(Task task, TaskTracker taskTrackerProxy) {
     super();
     this.task = task;
-    this.taskConf = taskConf;
     this.taskTrackerProxy = taskTrackerProxy;
   }
 
   @Override
   public void run() {
     try {
-      task.startTask(taskConf, taskTrackerProxy);
+      task.startTask(task, taskTrackerProxy);
     } catch (IOException e) {
       LOG.error("IOException: " + e);
     } catch (ClassNotFoundException e) {

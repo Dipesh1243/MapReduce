@@ -30,12 +30,12 @@ public class ReduceTask extends Task {
   }
 
   @Override
-  public void startTask(JobConf taskConf, TaskUmbilicalProtocol taskTrackerProxy) throws IOException,
+  public void startTask(Task task, TaskUmbilicalProtocol taskTrackerProxy) throws IOException,
           ClassNotFoundException, InterruptedException, RuntimeException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     int taskNum = taskStatus.getTaskNum();
     
     // do sort/merge phase (build reduce input table)
-    String mapOutBase = taskConf.getMapOutPath();
+    String mapOutBase = taskConf.get(Util.LOCAL_ROOT_DIR) + File.separator + task.getJobid().toString()+ File.separator;
     doSortMerge(mapOutBase, taskNum);
     
     // get user defined mapper
@@ -51,6 +51,11 @@ public class ReduceTask extends Task {
     } 
     
     output.writeToDisk();
+    
+    // TODO delete map output
+//    File mapoutFile = new File(mapOutBase);
+//    Util.delete(mapoutFile);
+    
     // notify taskTracker
     taskTrackerProxy.done(taskStatus.getTaskId());
   }

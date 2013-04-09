@@ -37,7 +37,7 @@ public abstract class Task implements Serializable{
    * @param taskTrackerProxy
    *          for progress reports
    */
-  public abstract void startTask(JobConf taskConf, TaskUmbilicalProtocol taskTrackerProxy)
+  public abstract void startTask(Task task, TaskUmbilicalProtocol taskTrackerProxy)
           throws IOException, ClassNotFoundException, InterruptedException, RuntimeException,
           InstantiationException, IllegalAccessException, InvocationTargetException,
           NoSuchMethodException;
@@ -46,7 +46,7 @@ public abstract class Task implements Serializable{
    * Get a runner (in a different thread) to run the task
    **/
   public TaskRunner createRunner(TaskTracker tracker, Task task) throws IOException {
-    return new TaskRunner(task, this.taskConf, tracker);
+    return new TaskRunner(task, tracker);
   }
 
   public JobConf getConf() {

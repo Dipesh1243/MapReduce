@@ -24,7 +24,7 @@ public class MapTask extends Task {
   }
 
   @Override
-  public void startTask(JobConf taskConf, TaskUmbilicalProtocol taskTrackerProxy) throws IOException,
+  public void startTask(Task task, TaskUmbilicalProtocol taskTrackerProxy) throws IOException,
           ClassNotFoundException, InterruptedException, RuntimeException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     // get split files
     List<FileSplit> files = taskConf.getSplitFiles(); 
@@ -37,7 +37,7 @@ public class MapTask extends Task {
     Mapper mapper = (Mapper) Util.newInstance(taskConf.getMapperclass());
     
     // get output collector
-    taskConf.setMapOutPath(taskConf.get(Util.LOCAL_ROOT_DIR) + File.separator + "mapout"+ File.separator);
+    taskConf.setMapOutPath(taskConf.get(Util.LOCAL_ROOT_DIR) + File.separator + task.getJobid().toString()+ File.separator);
     String basePath = taskConf.getMapOutPath() + taskId.toString() + File.separator;
     int nred = taskConf.getNumReduceTasks();
     MapOutputCollector output = new MapOutputCollector(basePath, nred);
