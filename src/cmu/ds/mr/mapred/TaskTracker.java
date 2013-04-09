@@ -134,6 +134,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   
   
   public TaskTracker(JobConf conf, String jobTrackerAddrStr) throws RemoteException, NotBoundException {
+    LOG.info("create TaskTracker");
     this.jobTrackerAddrStr = jobTrackerAddrStr;
     Registry registry = LocateRegistry.getRegistry(jobTrackerAddrStr);
     jobTrackerProxy = (InterTrackerProtocol) registry.lookup(Util.SERVICE_NAME_INTERTRACKER);
@@ -141,13 +142,13 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     
     localRootDir = (String) conf.getProperties().get(Util.LOCAL_ROOT_DIR);
     
-    mapTaskMax = (Integer) conf.getProperties().get(Util.MAP_TASK_MAX);
-    redTaskMax = (Integer) conf.getProperties().get(Util.RED_TASK_MAX);
+    mapTaskMax = Integer.parseInt((String)conf.getProperties().get(Util.MAP_TASK_MAX));
+    redTaskMax = Integer.parseInt( (String) conf.getProperties().get(Util.RED_TASK_MAX));
     
-    mapLauncher = new TaskLauncher(mapTaskMax);
-    redLauncher = new TaskLauncher(redTaskMax);
-    mapLauncher.start();
-    redLauncher.start();
+//    mapLauncher = new TaskLauncher(mapTaskMax);
+//    redLauncher = new TaskLauncher(redTaskMax);
+//    mapLauncher.start();
+//    redLauncher.start();
   }
  
   @Override
@@ -175,6 +176,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   
   private void startTaskTracker() throws InterruptedException, IOException {
     // TODO get run or stop instruction from JobTracker
+    LOG.info("startTaskTracker(): start");
     while(true) {
       Thread.sleep(Util.TIME_INTERVAL_HEARTBEAT);
       
@@ -183,9 +185,10 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       int numFreeMapSlots = mapLauncher.getNumFreeSlots();
       int numFreeRedSlots = redLauncher.getNumFreeSlots();
       TaskTrackerStatus tts = new TaskTrackerStatus(taskStatusList, numFreeMapSlots, numFreeRedSlots);
-      
+
       // transmit heartbeat
-      Task retTask = jobTrackerProxy.heartbeat(tts);
+        Task retTask = jobTrackerProxy.heartbeat(tts);
+      //LOG.info("finish heartbeat and task id: " + retTask.taskId.getTaskNum());
       // retTask == null means JobTracker has no available task to assign
       if(retTask != null) {
         // put it in the taskTracker's table
@@ -222,8 +225,10 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       return;
     }
     // read configure file
+    LOG.setInfo(true);
     JobConf conf = new JobConf();
-    TaskTracker tt = new TaskTracker(conf, args[1]);
+    LOG.info("prepare to create TaskTracker");
+    TaskTracker tt = new TaskTracker(conf, args[0]);
     tt.startTaskTracker();
   }
 

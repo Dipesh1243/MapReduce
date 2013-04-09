@@ -1,6 +1,7 @@
 package cmu.ds.mr.mapred;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -15,10 +16,12 @@ import java.util.TreeMap;
 
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.JobStatus.JobState;
+import cmu.ds.mr.mapred.TaskStatus.TaskState;
+import cmu.ds.mr.mapred.TaskStatus.TaskType;
 import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
-public class JobTracker implements JobSubmissionProtocol{
+public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol{
   private static final Log LOG = new Log("JobTracker.class");
 //  public static enum State { INITIALIZING, RUNNING }
 //  State state = State.INITIALIZING;
@@ -157,16 +160,34 @@ public class JobTracker implements JobSubmissionProtocol{
 
 
   @Override
-  public String getSystemDir() {
+  public String getSystemDir() throws RemoteException {
     // TODO Auto-generated method stub
     return null;
   }
   
-  public List<Task> heartbeat(TaskTrackerStatus tasktracker){
-    return taskscheduler.assignTasks(tasktracker);
+  
+  
+  
+  
+  @Override
+  public Task heartbeat(TaskTrackerStatus status) throws IOException {
+    // TODO Auto-generated method stub
+    
+    //for test
+    //    TaskID tid = new TaskID(null, TaskType.MAP, 85, 1);
+    //    return new MapTask(tid, null, new TaskStatus(tid, TaskState.READY, TaskType.MAP));
+    
+    return null;
   }
-  
-  
+
+
+  @Override
+  public void reportTaskTrackerError(String taskTracker, String errorClass, String errorMessage)
+          throws IOException {
+    // TODO Auto-generated method stub
+    
+  }
+
   public static void main(String[] args) {
     if (System.getSecurityManager() == null) {
         System.setSecurityManager(new SecurityManager());
@@ -182,6 +203,11 @@ public class JobTracker implements JobSubmissionProtocol{
         Registry registry = LocateRegistry.getRegistry();
 
         registry.rebind(name, stub);
+        
+        
+        name = Util.SERVICE_NAME_INTERTRACKER;
+        registry.rebind(name, (InterTrackerProtocol)stub);
+        
         System.out.println("ComputeEngine bound");
 
 //        LOG.info("jobtracker bound");
@@ -191,6 +217,10 @@ public class JobTracker implements JobSubmissionProtocol{
 //        LOG.error("JobTracker exception:" + Util.stringifyException(e));
     }
   }
-  
-  
+
+
+
+
+
+
 }

@@ -1,13 +1,14 @@
 package cmu.ds.mr.mapred;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.util.Log;
 
-public abstract class Task {
+public abstract class Task implements Serializable{
   private static final Log LOG = new Log("Task.class");
 
   // JobID is in taskId, use task.getJobid() to get JobId

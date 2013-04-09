@@ -94,6 +94,7 @@ interface InterTrackerProtocol extends Remote {
    */
   Task heartbeat(TaskTrackerStatus status)
     throws IOException;
+  
 //  Task heartbeat(TaskTrackerStatus status, 
 //          boolean restarted, 
 //          boolean initialContact,
@@ -135,9 +136,9 @@ interface InterTrackerProtocol extends Remote {
    * 
    * @return the system directory where job-specific files are to be placed.
    */
-  public String getSystemDir();
-  
-  
+//  public String getSystemDir();
+//  
+//  
   /**
    * Returns the buildVersion of the JobTracker 
    */
