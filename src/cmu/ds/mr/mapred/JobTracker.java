@@ -1,12 +1,16 @@
 package cmu.ds.mr.mapred;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +45,7 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol{
   
   public JobTracker(){
     super();
-    this.jobIdentifier = "jobtracker";
+    //this.jobIdentifier = "jobtracker";
   }
   
   
@@ -55,7 +59,9 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol{
 
   @Override
   public JobID getNewJobId() throws IOException {
-    return new JobID(jobIdentifier, nextID++);
+    DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    String curDate = dateFormat.format(new Date());
+    return new JobID(curDate, nextID++);
   }
 
 
@@ -236,6 +242,10 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol{
         registry.rebind(name, (InterTrackerProtocol)stub);
         
         System.out.println("SERVICE bound");
+        
+        InetAddress addr = InetAddress.getLocalHost();
+        String localhostname = addr.getCanonicalHostName();
+        System.out.printf("JobTracker host name: %s\n", localhostname);
 
 //        LOG.info("jobtracker bound");
     } catch (Exception e) {
