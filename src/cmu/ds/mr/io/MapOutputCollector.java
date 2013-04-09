@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-public class MapOutputCollector implements OutputCollector<String, Long> {
+public class MapOutputCollector implements OutputCollector<String, Integer> {
 
-  private List<Map<String, Long>> outlist;
+  private List<Map<String, Integer>> outlist;
 
   private int numRed;
 
@@ -20,15 +20,19 @@ public class MapOutputCollector implements OutputCollector<String, Long> {
 
   public MapOutputCollector(String basePath, int nred) throws IOException {
     this.basePath = basePath;
+    File file = new File(basePath);
+    if(!file.exists())
+      file.mkdirs();
+    
     numRed = nred;
-    outlist = new ArrayList<Map<String, Long>>();
+    outlist = new ArrayList<Map<String, Integer>>();
     for (int i = 0; i < numRed; i++) {
-      outlist.add(new TreeMap<String, Long>());
+      outlist.add(new TreeMap<String, Integer>());
     }
   }
 
   @Override
-  public void collect(String key, Long value) throws IOException {
+  public void collect(String key, Integer value) throws IOException {
     // Assume key is String
     int k = key.toString().hashCode() % numRed;
     outlist.get(k).put(key, value);
@@ -39,8 +43,8 @@ public class MapOutputCollector implements OutputCollector<String, Long> {
       BufferedWriter bw = new BufferedWriter(
               new FileWriter(basePath + File.pathSeparatorChar + i));
       try {
-        Map<String, Long> map = outlist.get(i);
-        for (Entry<String, Long> en : map.entrySet()) {
+        Map<String, Integer> map = outlist.get(i);
+        for (Entry<String, Integer> en : map.entrySet()) {
           bw.write(String.format("%s\t%d\n", en.getKey(), en.getValue()));
         }
       } finally {
