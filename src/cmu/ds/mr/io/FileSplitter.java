@@ -90,7 +90,7 @@ public class FileSplitter {
         }
         
         // the remaining part of a file
-        if(start > fileLen) {
+        if(start < fileLen) {
           FileSplit fs = new FileSplit(inFile.getAbsolutePath(), start, nline);
           splitFiles.add(fs);
         }

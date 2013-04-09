@@ -40,6 +40,9 @@ public class JobConf implements Serializable {
   public JobConf() throws FileNotFoundException, IOException {
     properties = new Properties();
     properties.load(new FileInputStream(Util.CONFIG_PATH));
+    
+    // set default numReduceTask
+    numReduceTasks = 4;
   }
   
   public List<FileSplit> getSplitFiles() {

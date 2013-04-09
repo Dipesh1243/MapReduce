@@ -55,6 +55,7 @@ public class WordCount {
 //    conf.setOutputKeyClass(Text.class);
 //    conf.setOutputValueClass(IntWritable.class);
 
+    conf.setNumReduceTasks(4);
     conf.setMapperClass(Map.class);
     conf.setReducerClass(Reduce.class);
 
