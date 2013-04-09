@@ -44,6 +44,8 @@ public class JobInProgress {
     this.jobconf = jobconf;
     
     this.startTime = System.currentTimeMillis();
+    
+    // TODO: init status here
     this.status.setStartTime(startTime);
   }
 
