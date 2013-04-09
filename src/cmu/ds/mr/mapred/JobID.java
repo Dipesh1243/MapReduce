@@ -45,16 +45,14 @@ public class JobID implements Comparable<JobID>, Serializable {
   private static final char SEPARATOR = '_';
   private int id;
 
-
-
   private static final String JOB = "job";
   private final String jtIdentifier;
   
-  protected static final NumberFormat idFormat = NumberFormat.getInstance();
-  static {
-    idFormat.setGroupingUsed(false);
-    idFormat.setMinimumIntegerDigits(4);
-  }
+//  protected static final NumberFormat idFormat = NumberFormat.getInstance();
+//  static {
+//    idFormat.setGroupingUsed(false);
+//    idFormat.setMinimumIntegerDigits(4);
+//  }
   
   /**
    * Constructs a JobID object 
@@ -104,7 +102,8 @@ public class JobID implements Comparable<JobID>, Serializable {
     builder.append(SEPARATOR);
     builder.append(jtIdentifier);
     builder.append(SEPARATOR);
-    builder.append(idFormat.format(id));
+    //builder.append(idFormat.format(id));
+    builder.append(String.format("%05d", id));
     return builder;
   }
 

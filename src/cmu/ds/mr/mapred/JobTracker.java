@@ -21,7 +21,7 @@ import cmu.ds.mr.mapred.JobStatus.JobState;
 import cmu.ds.mr.util.Util;
 
 public class JobTracker implements JobSubmissionProtocol{
-  private static final Log LOG = LogFactory.getLog(JobTracker.class);
+  //private static final Log LOG = LogFactory.getLog(JobTracker.class);
 //  public static enum State { INITIALIZING, RUNNING }
 //  State state = State.INITIALIZING;
 
@@ -68,7 +68,7 @@ public class JobTracker implements JobSubmissionProtocol{
     
     //TODO: need to check Queue later
     if(!jobQueue.offer(job)){
-      LOG.info("submitJob: Cannot enqueue the job");
+//      LOG.info("submitJob: Cannot enqueue the job");
       return null;
     }
    
@@ -83,7 +83,7 @@ public class JobTracker implements JobSubmissionProtocol{
     synchronized (jobTable) {
         jobTable.put(jobId, job);
         job.getStatus().setState(JobState.WAITING);
-        LOG.info("addJob(): finish adding job #" + job.getJobid().getId());
+//        LOG.info("addJob(): finish adding job #" + job.getJobid().getId());
     }
     return job.getStatus();
   }
@@ -93,14 +93,14 @@ public class JobTracker implements JobSubmissionProtocol{
   public void killJob(JobID jobid) throws IOException {
     // TODO Auto-generated method stub
     if (null == jobid) {
-      LOG.info("Null jobid object sent to JobTracker.killJob()");
+//      LOG.info("Null jobid object sent to JobTracker.killJob()");
       return;
     }
     
     JobInProgress job = jobTable.get(jobid);
     
     if (null == job) {
-      LOG.info("killJob(): JobId " + jobid.toString() + " is not a valid job");
+//      LOG.info("killJob(): JobId " + jobid.toString() + " is not a valid job");
       return;
     }
     
@@ -111,13 +111,13 @@ public class JobTracker implements JobSubmissionProtocol{
   @Override
   public JobStatus getJobStatus(JobID jobid) throws IOException {
     if (null == jobid) {
-      LOG.warn("JobTracker.getJobStatus() cannot get status for null jobid");
+//      LOG.warn("JobTracker.getJobStatus() cannot get status for null jobid");
       return null;
     }
     synchronized (this) {
       JobInProgress job = jobTable.get(jobid);
       if (job == null) {
-        LOG.warn("JobTracker.getJobStatus() cannot get job from the given jobid");
+//        LOG.warn("JobTracker.getJobStatus() cannot get job from the given jobid");
       } 
       return job.getStatus();
     }
@@ -176,17 +176,17 @@ public class JobTracker implements JobSubmissionProtocol{
 //    LOG.info("Starting jobtracker");
     try {
         String name = Util.SERVICE_NAME;
-        JobSubmissionProtocol jobtracker = new JobTracker();
+        JobTracker jobtracker = new JobTracker();
         JobSubmissionProtocol stub =
             (JobSubmissionProtocol) UnicastRemoteObject.exportObject(jobtracker, 0);
-        Registry registry = LocateRegistry.getRegistry();
+        Registry registry = LocateRegistry.getRegistry(3944);
 
         registry.rebind(name, stub);
         
 //        LOG.info("jobtracker bound");
     } catch (Exception e) {
-        
-//        LOG.error("JobTracker exception:" + Util.stringifyException(e));
+      e.printStackTrace();
+      //        LOG.error("JobTracker exception:" + Util.stringifyException(e));
     }
   }
   
