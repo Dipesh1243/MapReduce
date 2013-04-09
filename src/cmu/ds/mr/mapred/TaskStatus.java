@@ -46,6 +46,8 @@ public class TaskStatus implements Serializable {
     this.taskId = taskId;
     this.state = state;
     this.type = type;
+    this.taskNum = taskId.getTaskNum();
+    this.tryNum = taskId.getTryNum();
   }
   
   

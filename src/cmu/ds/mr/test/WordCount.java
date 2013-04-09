@@ -64,7 +64,7 @@ public class WordCount {
     
 //    conf.setInpath(args[0]);
 //    conf.setOutpath(args[1]);
-    conf.setInpath("data/abstract.txt");
+    conf.setInpath("data/1.txt");
     conf.setOutpath("data/out/");
 
     JobClient.runJob(conf);
