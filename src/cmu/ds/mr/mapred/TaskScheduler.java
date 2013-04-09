@@ -3,6 +3,7 @@ package cmu.ds.mr.mapred;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -18,8 +19,8 @@ class TaskScheduler {
   
   private Queue<JobInProgress> jobQueue;
   private Map<JobID, JobInProgress> jobTable;
-  private Queue<MapTask> maptaskQueue;
-  private Queue<ReduceTask> reducetaskQueue;  
+  private Queue<MapTask> maptaskQueue = new LinkedList();
+  private Queue<ReduceTask> reducetaskQueue = new LinkedList();  
   
   public TaskScheduler(Queue<JobInProgress> jobQueue, Map<JobID, JobInProgress> jobTable){
     this.jobQueue = jobQueue;
@@ -92,7 +93,7 @@ class TaskScheduler {
           return maptaskQueue.poll();
   }
   
-  public synchronized Task assignTaskbasedonType(TaskStatus.TaskType type){
+  public synchronized Task assignTaskbasedonType(TaskType type){
     if(type == TaskType.REDUCE){
       if(reducetaskQueue.isEmpty()){
         if(!addTasks()){

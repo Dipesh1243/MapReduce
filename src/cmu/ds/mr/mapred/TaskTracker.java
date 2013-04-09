@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -134,6 +135,9 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   
   
   public TaskTracker(JobConf conf, String jobTrackerAddrStr) throws RemoteException, NotBoundException {
+    taskMap = new HashMap<TaskID, Task>();
+    taskDoneMap = new HashMap<TaskID, Task>();
+    
     LOG.info("create TaskTracker");
     this.jobTrackerAddrStr = jobTrackerAddrStr;
     Registry registry = LocateRegistry.getRegistry(jobTrackerAddrStr);
@@ -145,10 +149,10 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     mapTaskMax = Integer.parseInt((String)conf.getProperties().get(Util.MAP_TASK_MAX));
     redTaskMax = Integer.parseInt( (String) conf.getProperties().get(Util.RED_TASK_MAX));
     
-//    mapLauncher = new TaskLauncher(mapTaskMax);
-//    redLauncher = new TaskLauncher(redTaskMax);
-//    mapLauncher.start();
-//    redLauncher.start();
+    mapLauncher = new TaskLauncher(mapTaskMax);
+    redLauncher = new TaskLauncher(redTaskMax);
+    mapLauncher.start();
+    redLauncher.start();
   }
  
   @Override
@@ -188,9 +192,11 @@ public class TaskTracker implements TaskUmbilicalProtocol {
 
       // transmit heartbeat
       Task retTask = jobTrackerProxy.heartbeat(tts);
-      //LOG.info("finish heartbeat and task id: " + retTask.taskId.getTaskNum());
+      //LOG.info("TaskTracker: recv heartbeat");
+      
       // retTask == null means JobTracker has no available task to assign
       if(retTask != null) {
+        LOG.info("finish heartbeat and task id: " + retTask.taskId.getTaskNum());
         // put it in the taskTracker's table
         taskMap.put(retTask.taskId, retTask);
         

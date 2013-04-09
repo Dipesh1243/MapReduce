@@ -21,9 +21,10 @@ import cmu.ds.mr.util.Util;
  * */
 public class FileSplitter {
   
-  private Properties prop = new Properties();
+  private Properties prop;
   
   public FileSplitter() throws FileNotFoundException, IOException {
+    prop = new Properties();
     prop.load(new FileInputStream(Util.CONFIG_PATH));
   }
 

@@ -23,7 +23,7 @@ run-jt:
 	java -cp . -Djava.rmi.server.codebase=file:/Users/lzy/Code/MapReduce/bin/ -Djava.security.policy=/Users/lzy/Code/MapReduce/server.policy cmu.ds.mr.mapred.JobTracker
 
 run-tt:
-	java -cp . -Djava.rmi.server.codebase=file:/Users/lzy/Code/MapReduce/bin/ -Djava.security.policy=/Users/lzy/Code/MapReduce/server.policy cmu.ds.mr.mapred.TaskTracker
+	java -cp . -Djava.rmi.server.codebase=file:/Users/lzy/Code/MapReduce/bin/ -Djava.security.policy=/Users/lzy/Code/MapReduce/server.policy cmu.ds.mr.mapred.TaskTracker localhost
 
 run-registry:
 	rmiregistry

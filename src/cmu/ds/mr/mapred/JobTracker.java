@@ -174,10 +174,17 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol{
     // TODO Auto-generated method stub
     
     //for test
-    //    TaskID tid = new TaskID(null, TaskType.MAP, 85, 1);
-    //    return new MapTask(tid, null, new TaskStatus(tid, TaskState.READY, TaskType.MAP));
+//    if(status.getNumFreeRedSlots() > 0){
+//      return taskscheduler.assignTaskbasedonType(TaskType.REDUCE);
+//    }
+//    if(status.getNumFreeMapSlots() > 0){
+//      return taskscheduler.assignTaskbasedonType(TaskType.MAP);
+//    }
+    return taskscheduler.assignTask();
+//    TaskID tid = new TaskID(null, TaskType.MAP, 85, 1);
+//        return new MapTask(tid, null, new TaskStatus(tid, TaskState.READY, TaskType.MAP));
     
-    return null;
+    //return null;
   }
 
 
