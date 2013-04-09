@@ -200,21 +200,12 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol{
     
     
     //for test
-      if(status.getNumFreeRedSlots() > 0){
-        return taskscheduler.assignTaskbasedonType(TaskType.REDUCE);
+      LOG.info(""+ status.getNumFreeSlots() +" " + status.getNumFreeSlots());
+      if(status.getNumFreeSlots() > 0){
+        return taskscheduler.assignTask();
       }
-      if(status.getNumFreeMapSlots() > 0){
-        return taskscheduler.assignTaskbasedonType(TaskType.MAP);
-      }
-    
     }
     return null;
-//      return taskscheduler.assignTask();
-//    }
-//    TaskID tid = new TaskID(null, TaskType.MAP, 85, 1);
-//        return new MapTask(tid, null, new TaskStatus(tid, TaskState.READY, TaskType.MAP));
-    
-    //return null;
   }
 
 

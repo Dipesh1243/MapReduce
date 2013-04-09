@@ -147,7 +147,6 @@ class TaskScheduler {
           return null;
         }
       }
-      
       return maptaskQueue.poll();
     }
 }
