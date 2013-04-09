@@ -140,6 +140,8 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     
     localRootDir = (String) conf.getProperties().get(Util.LOCAL_ROOT_DIR);
     
+    numFreeSlots = new AtomicInteger();
+    numMaxSlots = new AtomicInteger();
     numFreeSlots.set(Integer.parseInt((String)conf.getProperties().get(Util.NUM_TASK_MAX)));
     numMaxSlots.set(numFreeSlots.get());
     
