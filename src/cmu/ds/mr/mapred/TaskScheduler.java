@@ -48,7 +48,7 @@ class TaskScheduler {
   private synchronized boolean addTasks(){
     
     if(jobQueue.isEmpty()){
-      LOG.info("addTasks(): no more jobs in job queue");
+      //LOG.info("addTasks(): no more jobs in job queue");
       return false;
     }
     

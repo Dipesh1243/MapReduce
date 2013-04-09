@@ -78,7 +78,8 @@ public class FileSplitter {
         br = new BufferedReader(new FileReader(inFile));
         while ((line = br.readLine()) != null) {
           fileLen += line.getBytes().length;
-
+          nline++;
+          
           if (fileLen >= cnt * blksize) {
             FileSplit fs = new FileSplit(inFile.getAbsolutePath(), start, nline);
             splitFiles.add(fs);
