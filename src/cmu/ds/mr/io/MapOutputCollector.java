@@ -17,7 +17,7 @@ public class MapOutputCollector implements OutputCollector<String, Integer> {
   public static final Log LOG =
           new Log("MapOutputCollector.class");
   
-  private List<Map<String, Integer>> outlist;
+  private List<Map<String, List<Integer>>> outlist;
 
   private int numRed;
 
@@ -33,9 +33,9 @@ public class MapOutputCollector implements OutputCollector<String, Integer> {
       file.mkdirs();
     
     numRed = nred;
-    outlist = new ArrayList<Map<String, Integer>>();
+    outlist = new ArrayList<Map<String, List<Integer>>>();
     for (int i = 0; i < numRed; i++) {
-      outlist.add(new TreeMap<String, Integer>());
+      outlist.add(new TreeMap<String, List<Integer>>());
     }
   }
 
@@ -45,7 +45,13 @@ public class MapOutputCollector implements OutputCollector<String, Integer> {
     int k = key.toString().hashCode() % numRed;
     if(k < 0)
       k += numRed;
-    outlist.get(k).put(key, value);
+    if(outlist.get(k).containsKey(key))
+      outlist.get(k).get(key).add(value);
+    else {
+      List<Integer> list = new ArrayList<Integer>();
+      list.add(value);
+      outlist.get(k).put(key, list);
+    }
     
     LOG.info(String.format("MapOutput: key %s\tval %s", key, value));
   }
@@ -55,9 +61,10 @@ public class MapOutputCollector implements OutputCollector<String, Integer> {
       BufferedWriter bw = new BufferedWriter(
               new FileWriter(basePath + File.separator + i));
       try {
-        Map<String, Integer> map = outlist.get(i);
-        for (Entry<String, Integer> en : map.entrySet()) {
-          bw.write(String.format("%s\t%d\n", en.getKey(), en.getValue()));
+        Map<String, List<Integer>> map = outlist.get(i);
+        for (Entry<String, List<Integer>> en : map.entrySet()) {
+          for(int num : en.getValue())
+            bw.write(String.format("%s\t%d\n", en.getKey(), num));
         }
       } finally {
         bw.close();
