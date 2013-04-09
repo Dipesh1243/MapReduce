@@ -25,6 +25,7 @@ class TaskScheduler {
   public TaskScheduler(Queue<JobInProgress> jobQueue, Map<JobID, JobInProgress> jobTable){
     this.jobQueue = jobQueue;
     this.jobTable = jobTable;
+    LOG.setDebug(true);
   }
   /**
    * Lifecycle method to allow the scheduler to start any work in separate
@@ -50,17 +51,26 @@ class TaskScheduler {
       LOG.info("addTasks(): no more jobs in job queue");
       return false;
     }
+    
+    boolean ret = true;
     JobInProgress jip = jobQueue.poll();
+    LOG.debug("addTasks(): add tasks from job: " + jip.getJobid().toString());
+    
+    LOG.debug("getNumMapTasks: " + jip.getJobconf().getNumMapTasks());
     for(int i = 1; i <= jip.getJobconf().getNumMapTasks(); ++i){
       TaskID tid = new TaskID(jip.getJobid(), TaskType.MAP, i, 1);
-      maptaskQueue.offer(new MapTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.MAP)));
+      ret = ret && maptaskQueue.add(new MapTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.MAP)));
+      
     }
-    
+    LOG.debug("getNumReduceTasks:  " + jip.getJobconf().getNumReduceTasks());
     for(int i = 1; i <= jip.getJobconf().getNumReduceTasks(); ++i){
       TaskID tid = new TaskID(jip.getJobid(), TaskType.REDUCE, i, 1);
-      reducetaskQueue.offer(new ReduceTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.REDUCE)));
+      ret = ret && reducetaskQueue.add(new ReduceTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.REDUCE)));
     }
-    return true;
+    LOG.debug("addTasks(): add tasks from job: " + jip.getJobid().getId() + " " + ret);
+    boolean tmp = reducetaskQueue.isEmpty();
+    LOG.debug(tmp ? "empty" : reducetaskQueue.peek().getJobid().toString());
+    return ret;
   }
   
   
@@ -78,10 +88,8 @@ class TaskScheduler {
             }
           }
           
-          boolean tmp = reducetaskQueue.isEmpty();
-          LOG.info(tmp ? "empty" : reducetaskQueue.peek().getJobid().toString());
-          
           JobID toreducejob = reducetaskQueue.peek().getJobid();
+
           if(jobTable.get(toreducejob).getStatus().getMapProgress() >= 0.99){
             return reducetaskQueue.poll();
           }
