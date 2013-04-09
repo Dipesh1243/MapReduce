@@ -44,6 +44,7 @@ public class MRtest {
     conf.setMapperClass(Map.class);
     conf.setReducerClass(Reduce.class);
     conf.setInpath("test.txt");
+    conf.setJobTrackerAddr("localhost");
     return conf;
   }
 }

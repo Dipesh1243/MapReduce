@@ -55,7 +55,13 @@ public class JobClient {
       System.setSecurityManager(new SecurityManager());
     }
     // get job tracker start address fomr jobConf
-    Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
+    Registry registry = LocateRegistry.getRegistry("gavin-X220");
+    
+    //TODO: TEST
+    //Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
+    
+    
+    
     jobTrackerProxy = (JobSubmissionProtocol) registry.lookup(Util.SERVICE_NAME);
   }
 

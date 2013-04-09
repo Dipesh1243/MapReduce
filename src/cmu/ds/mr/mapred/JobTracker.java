@@ -172,18 +172,21 @@ public class JobTracker implements JobSubmissionProtocol{
         System.setSecurityManager(new SecurityManager());
     }
      
-    LOG.isInfoEnabled();
-    LOG.info("Starting jobtracker");
+//    LOG.isInfoEnabled();
+//    LOG.info("Starting jobtracker");
     try {
         String name = Util.SERVICE_NAME;
         JobSubmissionProtocol jobtracker = new JobTracker();
         JobSubmissionProtocol stub =
             (JobSubmissionProtocol) UnicastRemoteObject.exportObject(jobtracker, 0);
         Registry registry = LocateRegistry.getRegistry();
+
         registry.rebind(name, stub);
-        LOG.info("jobtracker bound");
+        
+//        LOG.info("jobtracker bound");
     } catch (Exception e) {
-        LOG.error("JobTracker exception:" + Util.stringifyException(e));
+        
+//        LOG.error("JobTracker exception:" + Util.stringifyException(e));
     }
   }
   
