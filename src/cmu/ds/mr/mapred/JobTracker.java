@@ -19,7 +19,6 @@ import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
 public class JobTracker implements JobSubmissionProtocol{
-  
   private static final Log LOG = new Log("JobTracker.class");
 //  public static enum State { INITIALIZING, RUNNING }
 //  State state = State.INITIALIZING;
