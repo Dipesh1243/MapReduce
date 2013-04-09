@@ -42,10 +42,13 @@ public class WordCount {
   }
 
   public static void main(String[] args) throws Exception {
-    if(args.length != 2) {
-      System.err.println("Usage: WordCount <inPath> <outPath>");
-      return;
-    }
+//    if(args.length != 2) {
+//      System.err.println("Usage: WordCount <inPath> <outPath>");
+//      return;
+//    }
+//    args[0] = "data/abstract.txt";
+//    args[1] = "data/out/";
+    
     JobConf conf = new JobConf();
     conf.setJobName("wordcount");
 
@@ -58,8 +61,10 @@ public class WordCount {
 //    conf.setInputFormat(TextInputFormat.class);
 //    conf.setOutputFormat(TextOutputFormat.class);
     
-    conf.setInpath(args[0]);
-    conf.setOutpath(args[1]);
+//    conf.setInpath(args[0]);
+//    conf.setOutpath(args[1]);
+    conf.setInpath("data/abstract.txt");
+    conf.setOutpath("data/out/");
 
     JobClient.runJob(conf);
   }
