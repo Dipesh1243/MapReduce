@@ -177,7 +177,7 @@ public class JobTracker implements JobSubmissionProtocol{
         JobTracker jobtracker = new JobTracker();
         JobSubmissionProtocol stub =
             (JobSubmissionProtocol) UnicastRemoteObject.exportObject(jobtracker, 0);
-        Registry registry = LocateRegistry.getRegistry(3944);
+        Registry registry = LocateRegistry.getRegistry();
 
         registry.rebind(name, stub);
         System.out.println("ComputeEngine bound");

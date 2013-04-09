@@ -53,7 +53,7 @@ public class JobClient {
       System.setSecurityManager(new SecurityManager());
     }
     // get job tracker start address fomr jobConf
-    Registry registry = LocateRegistry.getRegistry("gavin-X220");
+    Registry registry = LocateRegistry.getRegistry("localhost");
     
     //TODO: TEST
     //Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
@@ -108,7 +108,8 @@ public class JobClient {
   public RunningJob submitJob(JobConf jobConf) throws IOException {
     // step 2: get new job ID
     JobID jid = jobTrackerProxy.getNewJobId();
-
+    System.out.println(jid.getId());
+    
     // TODO: split input files
     //String jobRootDir = getSystemDir().toString() + File.separatorChar + jid.toString();
     FileSplitter splitter = new FileSplitter();
