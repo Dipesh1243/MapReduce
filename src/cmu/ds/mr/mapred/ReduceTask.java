@@ -42,7 +42,7 @@ public class ReduceTask extends Task {
     Reducer reducer = (Reducer) Util.newInstance(taskConf.getReducerclass());
     
     // get output collector
-    String basePath = taskConf.getOutpath() + File.pathSeparatorChar;
+    String basePath = taskConf.getOutpath() + File.separator;
     //int nred = taskConf.getNumReduceTasks();
     RedOutputCollector output = new RedOutputCollector(basePath, taskNum);
     

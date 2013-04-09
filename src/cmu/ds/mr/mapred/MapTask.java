@@ -37,8 +37,8 @@ public class MapTask extends Task {
     Mapper mapper = (Mapper) Util.newInstance(taskConf.getMapperclass());
     
     // get output collector
-    taskConf.setMapOutPath(taskConf.get(Util.LOCAL_ROOT_DIR) + File.pathSeparatorChar + "mapout"+ File.pathSeparatorChar);
-    String basePath = taskConf.getMapOutPath() + taskId.toString() + File.pathSeparatorChar;
+    taskConf.setMapOutPath(taskConf.get(Util.LOCAL_ROOT_DIR) + File.separator + "mapout"+ File.pathSeparatorChar);
+    String basePath = taskConf.getMapOutPath() + taskId.toString() + File.separator;
     int nred = taskConf.getNumReduceTasks();
     MapOutputCollector output = new MapOutputCollector(basePath, nred);
     
