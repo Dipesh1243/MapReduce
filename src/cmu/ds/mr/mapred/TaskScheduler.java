@@ -13,6 +13,7 @@ import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.TaskStatus.TaskState;
 import cmu.ds.mr.mapred.TaskStatus.TaskType;
 import cmu.ds.mr.util.Log;
+import cmu.ds.mr.util.Util;
 
 class TaskScheduler {
   public static final Log LOG = new Log("TaskScheduler.class");
@@ -45,10 +46,33 @@ class TaskScheduler {
   }
 
   
+  
+  public synchronized boolean recoverFailedTask(TaskStatus tstatus){
+    JobID jid = tstatus.getTaskId().getJobId();
+    TaskType ttype = tstatus.getType();
+    JobInProgress jip = jobTable.get(jid);
+    boolean ret = false;
+    if(tstatus.getTaskNum() < Util.MAX_TRY){
+        if(ttype == TaskType.MAP){
+          TaskID tid = new TaskID(jip.getJobid(), TaskType.MAP, tstatus.getTaskNum(), tstatus.getTryNum()+1);
+          ret = maptaskQueue.add(new MapTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.MAP)));
+        }
+        else if(ttype == TaskType.REDUCE){
+          TaskID tid = new TaskID(jip.getJobid(), TaskType.REDUCE, tstatus.getTaskNum(), tstatus.getTryNum()+1);
+          ret = reducetaskQueue.add(new ReduceTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.REDUCE)));
+        } 
+      
+    }
+    else{
+      LOG.info("Try time exceeded.");
+    }
+    return ret;
+  }
+  
   private synchronized boolean addTasks(){
     
     if(jobQueue.isEmpty()){
-      LOG.info("addTasks(): no more jobs in job queue");
+      LOG.warn("addTasks(): no more jobs in job queue");
       return false;
     }
     
