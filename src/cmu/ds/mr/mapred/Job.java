@@ -3,12 +3,11 @@ package cmu.ds.mr.mapred;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.JobStatus.JobState;
+import cmu.ds.mr.util.Log;
 
 /**
  * Job class for running job
@@ -16,7 +15,7 @@ import cmu.ds.mr.mapred.JobStatus.JobState;
  * */
 public class Job implements RunningJob {
 
-  private static final Log LOG = LogFactory.getLog(Job.class);
+  private static final Log LOG = new Log("Job.class");
 
   // TODO: duplicate JobID field in Job
   private JobID jid;  
