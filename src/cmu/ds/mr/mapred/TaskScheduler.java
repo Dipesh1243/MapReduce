@@ -78,6 +78,9 @@ class TaskScheduler {
             }
           }
           
+          boolean tmp = reducetaskQueue.isEmpty();
+          LOG.info(tmp ? "empty" : reducetaskQueue.peek().getJobid().toString());
+          
           JobID toreducejob = reducetaskQueue.peek().getJobid();
           if(jobTable.get(toreducejob).getStatus().getMapProgress() >= 0.99){
             return reducetaskQueue.poll();
