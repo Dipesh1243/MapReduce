@@ -108,7 +108,8 @@ public class JobClient {
   public RunningJob submitJob(JobConf jobConf) throws IOException {
     // step 2: get new job ID
     JobID jid = jobTrackerProxy.getNewJobId();
-
+    System.out.println(jid.getId());
+    
     // TODO: split input files
     //String jobRootDir = getSystemDir().toString() + File.separatorChar + jid.toString();
     FileSplitter splitter = new FileSplitter();

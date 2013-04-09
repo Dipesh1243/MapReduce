@@ -38,6 +38,7 @@ public class JobConf implements Serializable {
   
   // read configure file in 
   public JobConf() throws FileNotFoundException, IOException {
+    properties = new Properties();
     properties.load(new FileInputStream(Util.CONFIG_PATH));
   }
   
