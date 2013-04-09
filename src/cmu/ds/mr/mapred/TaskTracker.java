@@ -187,7 +187,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       TaskTrackerStatus tts = new TaskTrackerStatus(taskStatusList, numFreeMapSlots, numFreeRedSlots);
 
       // transmit heartbeat
-        Task retTask = jobTrackerProxy.heartbeat(tts);
+      Task retTask = jobTrackerProxy.heartbeat(tts);
       //LOG.info("finish heartbeat and task id: " + retTask.taskId.getTaskNum());
       // retTask == null means JobTracker has no available task to assign
       if(retTask != null) {

@@ -69,9 +69,8 @@ class TaskScheduler {
    * @param taskTracker The TaskTracker for which we're looking for tasks.
    * @return A list of tasks to run on that TaskTracker, possibly empty.
    */
-  public synchronized Task assignTask(TaskStatus.TaskType type){
+  public synchronized Task assignTask(){
 
-        if(type == TaskStatus.TaskType.MAP){
           if(reducetaskQueue.isEmpty()){
             if(!addTasks()){
               return null;
@@ -79,11 +78,11 @@ class TaskScheduler {
           }
           
           JobID toreducejob = reducetaskQueue.peek().getJobid();
-          if(jobTable.get(toreducejob).getStatus().getMapProgress() == 1){
+          if(jobTable.get(toreducejob).getStatus().getMapProgress() >= 0.99){
             return reducetaskQueue.poll();
           }
-        }
-        else{
+        
+
           if(maptaskQueue.isEmpty()){
             if(!addTasks()){
               return null;
@@ -91,15 +90,34 @@ class TaskScheduler {
           }
           
           return maptaskQueue.poll();
-        }
-        return null;
   }
   
-  
+  public synchronized Task assignTaskbasedonType(TaskStatus.TaskType type){
+    if(type == TaskType.REDUCE){
+      if(reducetaskQueue.isEmpty()){
+        if(!addTasks()){
+          return null;
+        }
+      }
+      JobID toreducejob = reducetaskQueue.peek().getJobid();
+      if(jobTable.get(toreducejob).getStatus().getMapProgress() >= 0.99){
+        return reducetaskQueue.poll();
+      }
+      return null;
+    }
+    else{
+      if(maptaskQueue.isEmpty()){
+        if(!addTasks()){
+          return null;
+        }
+      }
+      
+      return maptaskQueue.poll();
+    }
+}
   
   public synchronized List<Task> assignTasks(TaskTrackerStatus taskTracker){
     //TODO: give tasks to tasktrackers based on their status 
-    
     return null;
   }
   
