@@ -37,7 +37,7 @@ public abstract class Task {
    * @param taskTrackerProxy
    *          for progress reports
    */
-  public abstract void startTask(JobConf jobConf, TaskUmbilicalProtocol taskTrackerProxy)
+  public abstract void startTask(JobConf taskConf, TaskUmbilicalProtocol taskTrackerProxy)
           throws IOException, ClassNotFoundException, InterruptedException, RuntimeException,
           InstantiationException, IllegalAccessException, InvocationTargetException,
           NoSuchMethodException;

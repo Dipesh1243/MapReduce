@@ -1,5 +1,6 @@
 package cmu.ds.mr.mapred;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -25,21 +26,22 @@ public class MapTask extends Task {
   }
 
   @Override
-  public void startTask(JobConf jobConf, TaskUmbilicalProtocol taskTrackerProxy) throws IOException,
+  public void startTask(JobConf taskConf, TaskUmbilicalProtocol taskTrackerProxy) throws IOException,
           ClassNotFoundException, InterruptedException, RuntimeException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     // get split files
-    List<FileSplit> files = jobConf.getSplitFiles(); 
+    List<FileSplit> files = taskConf.getSplitFiles(); 
     
     // read map input (sorted by key)
     LineRecordReader reader = new LineRecordReader();
     Map<Long, String> mapInput = reader.readAllRecordInFile(files.get(taskStatus.getTaskNum()));
     
     // get user defined mapper
-    Mapper mapper = (Mapper) Util.newInstance(jobConf.getMapperclass());
+    Mapper mapper = (Mapper) Util.newInstance(taskConf.getMapperclass());
     
     // get output collector
-    String basePath = jobConf.getMapOutPath();
-    int nred = jobConf.getNumReduceTasks();
+    taskConf.setMapOutPath(taskConf.get(Util.LOCAL_ROOT_DIR) + File.pathSeparatorChar + "mapout"+ File.pathSeparatorChar);
+    String basePath = taskConf.getMapOutPath() + taskId.toString() + File.pathSeparatorChar;
+    int nred = taskConf.getNumReduceTasks();
     MapOutputCollector output = new MapOutputCollector(basePath, nred);
     
     for(Entry<Long, String> en : mapInput.entrySet()) {

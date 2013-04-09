@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import cmu.ds.mr.conf.JobConf;
+import cmu.ds.mr.mapred.TaskStatus.TaskState;
 import cmu.ds.mr.mapred.TaskStatus.TaskType;
 import cmu.ds.mr.util.Util;
 
@@ -119,6 +120,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   // running task table
   private String taskTrackerName; // taskTrackerName assigned by jobtracker to uniquely identify a taskTracker
   private Map<TaskID, Task> taskMap;  // running tasks in taskTracker
+  private Map<TaskID, Task> taskDoneMap;  // finisehed task map 
   private int mapTaskMax;
   private int redTaskMax;
   private int slotTotal;
@@ -167,7 +169,10 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   public void done(TaskID taskid) throws IOException {
     //taskMap.remove(taskid);
     // notify JobTracker
-    
+    Task ts = taskMap.get(taskid);
+    ts.taskStatus.setState(TaskState.SUCCEEDED);
+    // put into finished task map
+    taskDoneMap.put(taskid, ts);
   }
   
   private void startTaskTracker() throws InterruptedException, IOException {
@@ -201,6 +206,14 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     List<TaskStatus> res = new ArrayList<TaskStatus>();
     for(Entry<TaskID, Task> en : taskMap.entrySet()) {
       res.add(en.getValue().getTaskStatus());
+    }
+    
+    // delete finished task once it has used after heartbeat
+    for(Entry<TaskID, Task> en : taskDoneMap.entrySet()) {
+      if(taskMap.containsKey(en.getKey())) {
+        taskMap.remove(en.getKey());
+        taskDoneMap.remove(en.getKey());
+      }
     }
     return res;
   }
