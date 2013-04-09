@@ -81,13 +81,13 @@ class TaskScheduler {
     LOG.debug("addTasks(): add tasks from job: " + jip.getJobid().toString());
     
     LOG.debug("getNumMapTasks: " + jip.getJobconf().getNumMapTasks());
-    for(int i = 1; i <= jip.getJobconf().getNumMapTasks(); ++i){
+    for(int i = 0; i < jip.getJobconf().getNumMapTasks(); ++i){
       TaskID tid = new TaskID(jip.getJobid(), TaskType.MAP, i, 1);
       ret = ret && maptaskQueue.add(new MapTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.MAP)));
       
     }
     LOG.debug("getNumReduceTasks:  " + jip.getJobconf().getNumReduceTasks());
-    for(int i = 1; i <= jip.getJobconf().getNumReduceTasks(); ++i){
+    for(int i = 0; i < jip.getJobconf().getNumReduceTasks(); ++i){
       TaskID tid = new TaskID(jip.getJobid(), TaskType.REDUCE, i, 1);
       ret = ret && reducetaskQueue.add(new ReduceTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.REDUCE)));
     }
