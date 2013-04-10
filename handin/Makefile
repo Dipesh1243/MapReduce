@@ -17,13 +17,13 @@ all:
 	#javac $(JFLAGS) $(SOURCES)
 
 demo:
-	java -cp . -Djava.rmi.server.codebase=file:/Users/lzy/Code/MapReduce/bin/ -Djava.security.policy=/Users/lzy/Code/MapReduce/server.policy cmu.ds.mr.test.WordCount
+	java -cp . -Djava.rmi.server.codebase=file:./ -Djava.security.policy=security.policy cmu.ds.mr.test.WordCount
 
 run-jt:
-	java -cp . -Djava.rmi.server.codebase=file:/Users/lzy/Code/MapReduce/bin/ -Djava.security.policy=/Users/lzy/Code/MapReduce/server.policy cmu.ds.mr.mapred.JobTracker
+	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobTracker
 
 run-tt:
-	java -cp . -Djava.rmi.server.codebase=file:/Users/lzy/Code/MapReduce/bin/ -Djava.security.policy=/Users/lzy/Code/MapReduce/server.policy cmu.ds.mr.mapred.TaskTracker localhost
+	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.TaskTracker localhost
 
 run-registry:
 	rmiregistry
