@@ -23,7 +23,7 @@ run-jt:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobTracker
 
 run-tt:
-	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.TaskTracker localhost
+	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.TaskTracker $(ADDR)
 
 run-registry:
 	rmiregistry
