@@ -29,10 +29,13 @@ public class Util {
 
   public static final String SERVICE_NAME_INTERTRACKER = "InterTrackerProtocol";
 
-  public static final String CONFIG_PATH = "./conf/mapred.conf";
+  public static final String CONFIG_PATH = "./conf/mapred.conf";  // well know configure file
 
   public static final int MAX_TRY = 3;
-  public static final int EXIT_JT_DOWN = -1;
+  //  exit code
+  public static final int EXIT_JT_DOWN = -1;  // job tracker down
+  public static final int EXIT_JT_NOTSTART = -2;  // job tracker not start
+  public static final int EXIT_JC_DOWN = -3;  // jobClient not down
 
   public static String stringifyException(Throwable e) {
     StringWriter stm = new StringWriter();

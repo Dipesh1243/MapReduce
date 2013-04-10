@@ -53,7 +53,7 @@ public class MapOutputCollector implements OutputCollector<String, Integer> {
       outlist.get(k).put(key, list);
     }
     
-    LOG.info(String.format("MapOutput: key %s\tval %s", key, value));
+    LOG.debug(String.format("MapOutput: key %s\tval %s", key, value));
   }
 
   public void writeToDisk() throws IOException {
@@ -71,7 +71,7 @@ public class MapOutputCollector implements OutputCollector<String, Integer> {
       }
     }
     
-    LOG.info("write to disk finished");
+    LOG.debug("write to disk finished");
   }
 
 }

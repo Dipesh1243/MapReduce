@@ -48,19 +48,23 @@ public class JobClient {
     initProxy();
   }
   
-  public void initProxy() throws RemoteException, NotBoundException {
-    if (System.getSecurityManager() == null) {
-      System.setSecurityManager(new SecurityManager());
+  public void initProxy() throws NotBoundException {
+    try {
+      if (System.getSecurityManager() == null) {
+        System.setSecurityManager(new SecurityManager());
+      }
+      // get job tracker start address fomr jobConf
+      Registry registry = LocateRegistry.getRegistry("localhost");
+      
+      //TODO: TEST
+      //Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
+      
+      jobTrackerProxy = (JobSubmissionProtocol) registry.lookup(Util.SERVICE_NAME);
     }
-    // get job tracker start address fomr jobConf
-    Registry registry = LocateRegistry.getRegistry("localhost");
-    
-    //TODO: TEST
-    //Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
-    
-    
-    
-    jobTrackerProxy = (JobSubmissionProtocol) registry.lookup(Util.SERVICE_NAME);
+    catch (RemoteException re) {
+      LOG.error("Remote exception! JobTracker not started");
+      System.exit(Util.EXIT_JT_NOTSTART);
+    }
   }
 
   public void readConfig() throws FileNotFoundException, IOException {
@@ -82,50 +86,68 @@ public class JobClient {
   /**
    * Monitor and print job status
    * */
-  private boolean monitorAndPrintJob(JobConf jobConf, RunningJob job) throws IOException,
-          InterruptedException {
-    JobID jid = job.getID();
-    String logstrPre = "";
-
-    while (!job.isComplete()) {
-      Thread.sleep(Util.TIME_INTERVAL_MONITOR);
-
-      // ask job tracker for new job
-      JobStatus jobStatusNew = jobTrackerProxy.getJobStatus(jid);
-      job.setJobStatus(jobStatusNew);
-
-      String logstr = String.format("%s: map %.1f\treduce %.1f", jid.toString(),
-              job.mapProgress(), job.reduceProgress());
-      if(!logstr.equals(logstrPre)) {
-        LOG.info(logstr);
-        System.out.println(logstr);
-        logstrPre = logstr;
+  private boolean monitorAndPrintJob(JobConf jobConf, RunningJob job) throws IOException {
+    try {
+      JobID jid = job.getID();
+      String logstrPre = "";
+  
+      while (!job.isComplete()) {
+        Thread.sleep(Util.TIME_INTERVAL_MONITOR);
+  
+        // ask job tracker for new job
+        JobStatus jobStatusNew = jobTrackerProxy.getJobStatus(jid);
+        job.setJobStatus(jobStatusNew);
+  
+        String logstr = String.format("%s: map %.1f\treduce %.1f", jid.toString(),
+                job.mapProgress(), job.reduceProgress());
+        if(!logstr.equals(logstrPre)) {
+          LOG.info(logstr);
+          System.out.println(logstr);
+          logstrPre = logstr;
+        }
       }
     }
+    catch (RemoteException re) {
+      LOG.error("Remote exception! JobTracker not started or down!");
+      System.exit(Util.EXIT_JT_DOWN);
+    }
+    catch (InterruptedException ie){
+      LOG.error("JobClient down!");
+      System.exit(Util.EXIT_JC_DOWN);
+    }
+    
     return true;
   }
 
   public RunningJob submitJob(JobConf jobConf) throws IOException {
-    // step 2: get new job ID
-    JobID jid = jobTrackerProxy.getNewJobId();
-    System.out.println(jid.getId());
-    
-    // TODO: split input files
-    //String jobRootDir = getSystemDir().toString() + File.separatorChar + jid.toString();
-    FileSplitter splitter = new FileSplitter();
-    List<FileSplit> splitFiles = splitter.getSplits(jobConf);
-    jobConf.setSplitFiles(splitFiles);
-    jobConf.setNumMapTasks(splitFiles.size());  // set # of maps 
-
-    // step 3: submit job
-    JobStatus status = jobTrackerProxy.submitJob(jid, jobConf);
-    if (status != null) {
-      // return a RunningJob (Job class)
-      return new Job(jid, jobConf, status);
-    } else {
-      LOG.error("Could not launch job");
-      throw new IOException("Could not launch job");
+    try {
+      // step 2: get new job ID
+      JobID jid = jobTrackerProxy.getNewJobId();
+      System.out.println(jid.getId());
+      
+      // TODO: split input files
+      //String jobRootDir = getSystemDir().toString() + File.separatorChar + jid.toString();
+      FileSplitter splitter = new FileSplitter();
+      List<FileSplit> splitFiles = splitter.getSplits(jobConf);
+      jobConf.setSplitFiles(splitFiles);
+      jobConf.setNumMapTasks(splitFiles.size());  // set # of maps 
+  
+      // step 3: submit job
+      JobStatus status = jobTrackerProxy.submitJob(jid, jobConf);
+      if (status != null) {
+        // return a RunningJob (Job class)
+        return new Job(jid, jobConf, status);
+      } else {
+        LOG.error("Could not launch job");
+        throw new IOException("Could not launch job");
+      }
     }
+    catch (RemoteException re) {
+      LOG.error("Remote exception! JobTracker not started or down!");
+      System.exit(Util.EXIT_JT_DOWN);
+    }
+    
+    return null;
   }
  
   /**

@@ -37,7 +37,7 @@ public class RedOutputCollector implements OutputCollector<String, Integer> {
     // Assume key is String
     outlist.put(key, value);
     
-    LOG.info(String.format("key %s\tval %s", key, value));
+    LOG.debug(String.format("key %s\tval %s", key, value));
   }
 
   public void writeToDisk() throws IOException {
@@ -52,7 +52,7 @@ public class RedOutputCollector implements OutputCollector<String, Integer> {
       bw.close();
     }
     
-    LOG.info("write to disk finished");
+    LOG.debug("write to disk finished");
   }
 
 }

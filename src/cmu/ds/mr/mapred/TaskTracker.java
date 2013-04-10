@@ -3,6 +3,7 @@ package cmu.ds.mr.mapred;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -128,27 +129,28 @@ public class TaskTracker implements TaskUmbilicalProtocol {
 //  private TaskLauncher redLauncher;
   
   
-  public TaskTracker(JobConf conf, String jobTrackerAddrStr) throws RemoteException, NotBoundException {
-    taskMap = new HashMap<TaskID, Task>();
-    taskDoneMap = new HashMap<TaskID, Task>();
-    
-    LOG.info("create TaskTracker");
-    this.jobTrackerAddrStr = jobTrackerAddrStr;
-    Registry registry = LocateRegistry.getRegistry(jobTrackerAddrStr);
-    jobTrackerProxy = (InterTrackerProtocol) registry.lookup(Util.SERVICE_NAME_INTERTRACKER);
-    // TODO get a taskTracker name from jobTracker
-    
-    localRootDir = (String) conf.getProperties().get(Util.LOCAL_ROOT_DIR);
-    
-    numFreeSlots = new AtomicInteger();
-    numMaxSlots = new AtomicInteger();
-    numFreeSlots.set(Integer.parseInt((String)conf.getProperties().get(Util.NUM_TASK_MAX)));
-    numMaxSlots.set(numFreeSlots.get());
-    
-//    mapLauncher = new TaskLauncher();
-//    redLauncher = new TaskLauncher();
-//    mapLauncher.start();
-//    redLauncher.start();
+  public TaskTracker(JobConf conf, String jobTrackerAddrStr) throws NotBoundException {
+    try {
+      taskMap = new HashMap<TaskID, Task>();
+      taskDoneMap = new HashMap<TaskID, Task>();
+      
+      LOG.info("create TaskTracker");
+      this.jobTrackerAddrStr = jobTrackerAddrStr;
+      Registry registry = LocateRegistry.getRegistry(jobTrackerAddrStr);
+      jobTrackerProxy = (InterTrackerProtocol) registry.lookup(Util.SERVICE_NAME_INTERTRACKER);
+      // TODO get a taskTracker name from jobTracker
+      
+      localRootDir = (String) conf.getProperties().get(Util.LOCAL_ROOT_DIR);
+      
+      numFreeSlots = new AtomicInteger();
+      numMaxSlots = new AtomicInteger();
+      numFreeSlots.set(Integer.parseInt((String)conf.getProperties().get(Util.NUM_TASK_MAX)));
+      numMaxSlots.set(numFreeSlots.get());
+    }
+    catch (RemoteException re) {
+      LOG.error("JobTracker hasn't been established!");
+      System.exit(Util.EXIT_JT_NOTSTART);
+    }
   }
  
   @Override
@@ -178,7 +180,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   
   private void startTaskTracker() throws IOException {
     // TODO get run or stop instruction from JobTracker
-    LOG.info("startTaskTracker(): start");
+    LOG.info("Starting taskTracker...");
     
     try{
       while(true) {
@@ -216,8 +218,12 @@ public class TaskTracker implements TaskUmbilicalProtocol {
         }
       } 
     }
+    catch (RemoteException re) {
+      LOG.error("Remote exception! JobTracker not started or down!");
+      System.exit(Util.EXIT_JT_DOWN);
+    }
     catch (InterruptedException ie){
-      LOG.error("JobServer down!");
+      LOG.error("TaskTracker down!");
       System.exit(Util.EXIT_JT_DOWN);
     }
   }
