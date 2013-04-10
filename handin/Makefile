@@ -17,7 +17,7 @@ all:
 	#javac $(JFLAGS) $(SOURCES)
 
 demo:
-	java -cp . -Djava.rmi.server.codebase=file:./ -Djava.security.policy=security.policy cmu.ds.mr.test.WordCount
+	java -cp . -Djava.rmi.server.codebase=file:./ -Djava.security.policy=security.policy cmu.ds.mr.test.WordCount $(IN) $(OUT)
 
 run-jt:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobTracker

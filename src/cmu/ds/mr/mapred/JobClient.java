@@ -53,7 +53,7 @@ public class JobClient {
       System.setSecurityManager(new SecurityManager());
     }
     // get job tracker start address fomr jobConf
-    Registry registry = LocateRegistry.getRegistry("localhost");
+    Registry registry = LocateRegistry.getRegistry(prop.getProperty(Util.JOBTRACK_ADDR));
     
     //TODO: TEST
     //Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
