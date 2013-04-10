@@ -32,6 +32,7 @@ public class Util {
   public static final String CONFIG_PATH = "./conf/mapred.conf";
 
   public static final int MAX_TRY = 3;
+  public static final int EXIT_JT_DOWN = -1;
 
   public static String stringifyException(Throwable e) {
     StringWriter stm = new StringWriter();

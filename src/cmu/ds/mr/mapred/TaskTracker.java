@@ -176,44 +176,50 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     numFreeSlots.incrementAndGet();
   }
   
-  private void startTaskTracker() throws InterruptedException, IOException {
+  private void startTaskTracker() throws IOException {
     // TODO get run or stop instruction from JobTracker
     LOG.info("startTaskTracker(): start");
-    while(true) {
-      Thread.sleep(Util.TIME_INTERVAL_HEARTBEAT);
-      
-      // build current task tracker status
-      List<TaskStatus> taskStatusList = getAllTaskStatus();
-      TaskTrackerStatus tts = new TaskTrackerStatus(taskStatusList, numFreeSlots.get());
-      
-      //LOG.debug(String.format("#freeSlot:%d", numFreeSlots.get()));
-      
-      // transmit heartbeat
-      Task retTask = jobTrackerProxy.heartbeat(tts);
-      //LOG.info("TaskTracker: recv heartbeat");
-      
-      // retTask == null means JobTracker has no available task to assign
-      if(retTask != null) {
-        LOG.info("get new task id: " + retTask.taskId.toString());
-        // put it in the taskTracker's table
-        taskMap.put(retTask.taskId, retTask);
-        
-        // launch the task when we have free slot
-        if(numFreeSlots.get() > 0) {
-          numFreeSlots.decrementAndGet();
-          
-          TaskRunner runner = retTask.createRunner(TaskTracker.this, retTask);
-          runner.start();
-        }
-        else
-          assert numFreeSlots.get() > 0 : String.format("numFreeSlots:%d", numFreeSlots.get());
-//        if(retTask.taskStatus.getType() == TaskType.MAP)
-//          mapLauncher.addToTaskQueue(retTask);
-//        else
-//          redLauncher.addToTaskQueue(retTask);
-      }
-    } 
     
+    try{
+      while(true) {
+        Thread.sleep(Util.TIME_INTERVAL_HEARTBEAT);
+        
+        // build current task tracker status
+        List<TaskStatus> taskStatusList = getAllTaskStatus();
+        TaskTrackerStatus tts = new TaskTrackerStatus(taskStatusList, numFreeSlots.get());
+        
+        //LOG.debug(String.format("#freeSlot:%d", numFreeSlots.get()));
+        
+        // transmit heartbeat
+        Task retTask = jobTrackerProxy.heartbeat(tts);
+        //LOG.info("TaskTracker: recv heartbeat");
+        
+        // retTask == null means JobTracker has no available task to assign
+        if(retTask != null) {
+          LOG.info("get new task id: " + retTask.taskId.toString());
+          // put it in the taskTracker's table
+          taskMap.put(retTask.taskId, retTask);
+          
+          // launch the task when we have free slot
+          if(numFreeSlots.get() > 0) {
+            numFreeSlots.decrementAndGet();
+            
+            TaskRunner runner = retTask.createRunner(TaskTracker.this, retTask);
+            runner.start();
+          }
+          else
+            assert numFreeSlots.get() > 0 : String.format("numFreeSlots:%d", numFreeSlots.get());
+  //        if(retTask.taskStatus.getType() == TaskType.MAP)
+  //          mapLauncher.addToTaskQueue(retTask);
+  //        else
+  //          redLauncher.addToTaskQueue(retTask);
+        }
+      } 
+    }
+    catch (InterruptedException ie){
+      LOG.error("JobServer down!");
+      System.exit(Util.EXIT_JT_DOWN);
+    }
   }
   
   public List<TaskStatus> getAllTaskStatus() {
