@@ -17,13 +17,13 @@ all:
 	#javac $(JFLAGS) $(SOURCES)
 
 demo:
-	java -cp . -Djava.rmi.server.codebase=file:./ -Djava.security.policy=security.policy cmu.ds.mr.test.WordCount
+	java -cp . -Djava.rmi.server.codebase=file:./ -Djava.security.policy=security.policy cmu.ds.mr.test.WordCount $(IN) $(OUT)
 
 run-jt:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobTracker
 
 run-tt:
-	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.TaskTracker localhost
+	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.TaskTracker $(ADDR)
 
 run-registry:
 	rmiregistry

@@ -31,6 +31,8 @@ public class Util {
 
   public static final String CONFIG_PATH = "./conf/mapred.conf";  // well know configure file
 
+  public static final String JOBTRACK_ADDR = "mapred.jobtracker.address";
+  
   public static final int MAX_TRY = 3;
   //  exit code
   public static final int EXIT_JT_DOWN = -1;  // job tracker down
