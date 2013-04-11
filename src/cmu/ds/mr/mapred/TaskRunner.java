@@ -12,7 +12,7 @@ import cmu.ds.mr.util.Util;
  * Class for running mappaer and reducer in a separate thread
  * 
  * */
-public class TaskRunner extends Thread {
+public class TaskRunner implements Runnable {
   
   public static final Log LOG = new Log("TaskRunner.class");
   
@@ -37,13 +37,10 @@ public class TaskRunner extends Thread {
         taskTrackerProxy.fail(task.getTaskStatus().getTaskId());
       } catch (IOException e1) {
         LOG.error("Task fails. IOException: " + e);
-        this.interrupt();
       } catch (InterruptedException e1) {
         LOG.error("Task fails. InterruptedException: " + e);
-        this.interrupt();
       }
       LOG.error("Task fails. Exception: " + e);
-      this.interrupt();
     } 
   }
 
