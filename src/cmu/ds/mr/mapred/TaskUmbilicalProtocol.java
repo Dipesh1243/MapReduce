@@ -69,7 +69,7 @@ interface TaskUmbilicalProtocol{
   //JvmTask getTask(JvmContext context) throws IOException;
   
   /**
-   * Report child's progress to parent.
+   * Report child's failure to parent.
    * 
    * @param taskId task-id of the child
    * @param taskStatus status of the child
@@ -77,7 +77,7 @@ interface TaskUmbilicalProtocol{
    * @throws InterruptedException
    * @return True if the task is known
    */
-  boolean statusUpdate(TaskID taskId, TaskStatus taskStatus) 
+  boolean fail(TaskID taskId) 
   throws IOException, InterruptedException;
   
   /** Report error messages back to parent.  Calls should be sparing, since all
@@ -98,7 +98,7 @@ interface TaskUmbilicalProtocol{
   /** Periodically called by child to check if parent is still alive. 
    * @return True if the task is known
    */
-  boolean ping(TaskID taskid) throws IOException;
+//  boolean ping(TaskID taskid) throws IOException;
 
   /** Report that the task is successfully completed.  Failure is assumed if
    * the task process exits without calling this.

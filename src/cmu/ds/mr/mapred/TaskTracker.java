@@ -157,15 +157,14 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   }
  
   @Override
-  public boolean statusUpdate(TaskID taskId, TaskStatus taskStatus) throws IOException,
+  public boolean fail(TaskID taskId) throws IOException,
           InterruptedException {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public boolean ping(TaskID taskid) throws IOException {
-    // TODO Auto-generated method stub
+    Task ts = taskMap.get(taskId);
+    ts.taskStatus.setState(TaskState.FAILED);
+    // put into finished task map
+    taskDoneMap.put(taskId, ts);
+    
+    numFreeSlots.incrementAndGet();
     return false;
   }
 
