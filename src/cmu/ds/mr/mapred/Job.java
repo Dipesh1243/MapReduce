@@ -74,19 +74,16 @@ public class Job implements RunningJob {
 
   @Override
   public boolean isComplete() throws IOException {
-    ensureState(JobState.RUNNING);
     return jobStatus.isJobComplete();
   }
 
   @Override
   public boolean isSuccessful() throws IOException {
-    ensureState(JobStatus.JobState.RUNNING);
     return jobStatus.isJobComplete();
   }
   
   @Override
   public void killJob() throws IOException {
-    ensureState(JobStatus.JobState.RUNNING);
     jobStatus.setState(JobState.KILLED);
   }
 
