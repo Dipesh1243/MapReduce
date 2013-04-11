@@ -29,11 +29,10 @@ public class Anagram {
    * @author subbu iyer
    */
 
-  public class AnagramMapper extends MapReduceBase implements
-          Mapper<Long, String, String, String> {
+  public class AnagramMapper extends MapReduceBase implements Mapper<Long, String, String, String> {
 
-    public void map(Long key, String value, OutputCollector<String, String> output) throws IOException {
-
+    public void map(Long key, String value, OutputCollector<String, String> output)
+            throws IOException {
       String word = value.toLowerCase().toString();
       char[] wordChars = word.toCharArray();
       Arrays.sort(wordChars);
@@ -52,9 +51,11 @@ public class Anagram {
    * 
    */
 
-  public class AnagramReducer extends MapReduceBase implements Reducer<String, String, String, String> {
+  public class AnagramReducer extends MapReduceBase implements
+          Reducer<String, String, String, String> {
 
-    public void reduce(String key, Iterator<String> values, OutputCollector<String, String> output) throws IOException {
+    public void reduce(String key, Iterator<String> values, OutputCollector<String, String> output)
+            throws IOException {
       String anastr = "";
       while (values.hasNext()) {
         String anagam = values.next();
@@ -73,21 +74,21 @@ public class Anagram {
    * @param args
    */
   public static void main(String[] args) throws Exception {
-    if(args.length != 3) {
+    if (args.length != 3) {
       System.err.println("Usage: Anagram <inPath> <outPath> <numReducer>");
       return;
     }
-    
+
     JobConf conf = new JobConf();
     conf.setJobName("anagramcount");
 
     conf.setMapperClass(AnagramMapper.class);
     // conf.setCombinerClass(AnagramReducer.class);
     conf.setReducerClass(AnagramReducer.class);
-    
+
     conf.setInpath(args[0]);
     conf.setOutpath(args[1]);
-    
+
     conf.setNumReduceTasks(Integer.parseInt(args[2]));
 
     JobClient.runJob(conf);

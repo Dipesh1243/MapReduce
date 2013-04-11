@@ -120,6 +120,8 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   private Map<TaskID, Task> taskMap; // running tasks in taskTracker
 
   private Map<TaskID, Task> taskDoneMap; // finisehed task map
+  
+  private Map<TaskID, Thread> threadMap;  // running thread map
 
   private String localRootDir; // local map output root dir
 
@@ -142,6 +144,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       taskTrackerName = InetAddress.getLocalHost().getCanonicalHostName();
       taskMap = new ConcurrentHashMap<TaskID, Task>();
       taskDoneMap = new ConcurrentHashMap<TaskID, Task>();
+      threadMap = new ConcurrentHashMap<TaskID, Thread>();
 
       LOG.info("create TaskTracker");
       this.jobTrackerAddrStr = jobTrackerAddrStr;
@@ -220,6 +223,17 @@ public class TaskTracker implements TaskUmbilicalProtocol {
             taskDoneMap = new HashMap<TaskID, Task>();
             continue;
           }
+          // check if it is a kill instruction
+          else if(retTask.getTaskStatus().getState() == TaskState.KILLED) {
+            TaskID taskid = retTask.getTaskStatus().getTaskId();
+            // kill task
+            if(threadMap.containsKey(taskid))
+              threadMap.get(taskid).interrupt(); 
+            
+            LOG.info("task killed: " + taskid.toString());
+            threadMap.remove(taskid);
+            continue;
+          }
 
           LOG.info("get new task id: " + retTask.taskId.toString());
           // put it in the taskTracker's table
@@ -230,7 +244,9 @@ public class TaskTracker implements TaskUmbilicalProtocol {
             numFreeSlots.decrementAndGet();
 
             TaskRunner runner = retTask.createRunner(TaskTracker.this, retTask);
-            runner.start();
+            Thread th = new Thread(runner);
+            threadMap.put(retTask.taskId, th);
+            th.start();
           } else
             assert numFreeSlots.get() > 0 : String.format("numFreeSlots:%d", numFreeSlots.get());
           // if(retTask.taskStatus.getType() == TaskType.MAP)
@@ -259,15 +275,12 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       Entry<TaskID, Task> en  = it.next();
       if (taskMap.containsKey(en.getKey())) {
         taskMap.remove(en.getKey());
+        threadMap.remove(en.getKey());
         it.remove();
       }
     }
-//    for (Entry<TaskID, Task> en : taskDoneMap.entrySet()) {
-//      if (taskMap.containsKey(en.getKey())) {
-//        taskMap.remove(en.getKey());
-//        taskDoneMap.remove(en.getKey());
-//      }
-//    }
+    
+    
     return res;
   }
 
