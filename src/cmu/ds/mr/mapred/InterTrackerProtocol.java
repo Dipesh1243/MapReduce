@@ -21,6 +21,7 @@ package cmu.ds.mr.mapred;
 
 import java.io.IOException;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /** 
  * Adapted from Hadoop:
@@ -95,6 +96,9 @@ interface InterTrackerProtocol extends Remote {
   Task heartbeat(TaskTrackerStatus status)
     throws IOException;
   
+  
+  public int getNewTaskTrackerId() throws IOException, RemoteException;
+
 //  Task heartbeat(TaskTrackerStatus status, 
 //          boolean restarted, 
 //          boolean initialContact,
