@@ -8,7 +8,7 @@ import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.JobStatus.JobState;
 import cmu.ds.mr.util.Log;
 
-public class JobInProgress implements Serializable{
+public class JobInProgress implements Comparable<JobInProgress>, Serializable{
   static final Log LOG = new Log("JobInProgress.class");
   
   private JobID jobid;
@@ -105,7 +105,11 @@ public class JobInProgress implements Serializable{
   }
   
   private synchronized void terminate(JobStatus.JobState jobTerminationState) {
-    //TODO: how to termintate a job
+	  if(this.getStatus().isJobComplete()) {
+		  System.out.println("Job already finished, cannot be killed");
+		  return;
+	  }
+	  this.status.setState(JobState.KILLED);
   }
   
   
@@ -125,4 +129,11 @@ public class JobInProgress implements Serializable{
     boolean initStarted;
     boolean initDone;
   }
+
+
+
+	@Override
+	public int compareTo(JobInProgress o) {
+		return this.jobid.compareTo(o.jobid);
+	}
 }

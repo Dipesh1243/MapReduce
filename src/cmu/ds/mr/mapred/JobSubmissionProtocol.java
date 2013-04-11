@@ -94,7 +94,8 @@ interface JobSubmissionProtocol extends Remote {
   /**
    * Kill the indicated job
    */
-  public void killJob(JobID jobid) throws IOException, RemoteException;
+  public boolean killJob(JobID jobid) throws IOException, RemoteException;
+  public boolean killAllJobs() throws IOException, RemoteException;
 
   /**
    * Set the priority of the specified job

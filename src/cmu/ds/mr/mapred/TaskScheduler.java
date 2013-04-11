@@ -119,7 +119,8 @@ class TaskScheduler {
           }
           
           JobID toreducejob = reducetaskQueue.peek().getJobid();
-
+          
+          
           if(jobTable.get(toreducejob).getStatus().getMapProgress() >= 0.99){
             return reducetaskQueue.poll();
           }

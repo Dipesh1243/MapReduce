@@ -3,7 +3,7 @@ package cmu.ds.mr.util;
 public class Log {
 
 
-  private boolean Debug = true;
+  private boolean Debug = false;
   private boolean Info = true;
   private boolean Warn = false;
 

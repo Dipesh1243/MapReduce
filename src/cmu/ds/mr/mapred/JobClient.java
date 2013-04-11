@@ -117,8 +117,11 @@ public class JobClient {
       if(job.getJobState() == JobState.SUCCEEDED){
     	  LOG.info("Job completed with success");
       }
-      else {
-    	  LOG.info("Job completed without success.");
+      else if (job.getJobState() == JobState.KILLED){
+    	  LOG.info("Job was killed.");
+      }
+      else{
+    	  LOG.info("Job completed without success");
       }
 
     }

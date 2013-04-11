@@ -25,6 +25,12 @@ run-jt:
 run-tt:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.TaskTracker $(ADDR)
 
+checkall:
+	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobManager -checkall
+
+killall:
+	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobManager -killall
+
 run-registry:
 	rmiregistry
 

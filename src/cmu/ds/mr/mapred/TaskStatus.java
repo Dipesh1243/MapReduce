@@ -92,5 +92,8 @@ public class TaskStatus implements Serializable {
     this.tryNum = tryNum;
   }
 
+  public JobID getjobID() {
+	    return this.taskId.getJobId();
+	  }
   
 }
