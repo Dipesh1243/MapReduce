@@ -53,13 +53,13 @@ public class JobClient {
       if (System.getSecurityManager() == null) {
         System.setSecurityManager(new SecurityManager());
       }
-    // get job tracker start address fomr jobConf
-    Registry registry = LocateRegistry.getRegistry(prop.getProperty(Util.JOBTRACK_ADDR));
-    
-    //TODO: TEST
-    //Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
-    
-    jobTrackerProxy = (JobSubmissionProtocol) registry.lookup(Util.SERVICE_NAME);
+      // get job tracker start address fomr jobConf
+      Registry registry = LocateRegistry.getRegistry(prop.getProperty(Util.JOBTRACK_ADDR));
+      
+      //TODO: TEST
+      //Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
+      
+      jobTrackerProxy = (JobSubmissionProtocol) registry.lookup(Util.SERVICE_NAME);
     }
     catch (RemoteException re) {
       LOG.error("Remote exception! JobTracker not started");

@@ -3,6 +3,8 @@ package cmu.ds.mr.mapred;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -129,8 +131,9 @@ public class TaskTracker implements TaskUmbilicalProtocol {
 //  private TaskLauncher redLauncher;
   
   
-  public TaskTracker(JobConf conf, String jobTrackerAddrStr) throws NotBoundException {
+  public TaskTracker(JobConf conf, String jobTrackerAddrStr) throws NotBoundException, UnknownHostException {
     try {
+      taskTrackerName = InetAddress.getLocalHost().getCanonicalHostName();
       taskMap = new HashMap<TaskID, Task>();
       taskDoneMap = new HashMap<TaskID, Task>();
       

@@ -42,30 +42,24 @@ public class WordCount {
   }
 
   public static void main(String[] args) throws Exception {
-//    if(args.length != 2) {
-//      System.err.println("Usage: WordCount <inPath> <outPath>");
-//      return;
-//    }
+    if(args.length != 3) {
+      System.err.println("Usage: WordCount <inPath> <outPath> <numReducer>");
+      return;
+    }
 //    args[0] = "data/abstract.txt";
 //    args[1] = "data/out/";
     
     JobConf conf = new JobConf();
     conf.setJobName("wordcount");
 
-//    conf.setOutputKeyClass(Text.class);
-//    conf.setOutputValueClass(IntWritable.class);
-
-    conf.setNumReduceTasks(4);
+    conf.setInpath(args[0]);
+    conf.setOutpath(args[1]);
+    
+    conf.setNumReduceTasks(Integer.parseInt(args[2]));
+    
     conf.setMapperClass(Map.class);
     conf.setReducerClass(Reduce.class);
 
-//    conf.setInputFormat(TextInputFormat.class);
-//    conf.setOutputFormat(TextOutputFormat.class);
-    
-//    conf.setInpath(args[0]);
-//    conf.setOutpath(args[1]);
-    conf.setInpath(args[0]);
-    conf.setOutpath(args[1]);
 
     JobClient.runJob(conf);
   }
