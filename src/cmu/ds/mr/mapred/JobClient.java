@@ -78,8 +78,9 @@ public class JobClient {
 
     // query status and state every second
     if (!jc.monitorAndPrintJob(jobConf, job)) {
-      throw new IOException("Job failed!");
+      throw new IOException("Job failed.");
     }
+    
     // job done
     return job;
   }
@@ -95,7 +96,7 @@ public class JobClient {
       while (!job.isComplete()) {
         Thread.sleep(Util.TIME_INTERVAL_MONITOR);
   
-        // ask job tracker for new job
+        // ask job tracker for new job status
         JobStatus jobStatusNew = jobTrackerProxy.getJobStatus(jid);
         job.setJobStatus(jobStatusNew);
   
@@ -103,6 +104,7 @@ public class JobClient {
         	LOG.info("Job failed");
         	return false;
         }
+        
         String logstr = String.format("%s: map %.1f\treduce %.1f", jid.toString(),
                 job.mapProgress(), job.reduceProgress());
         if(!logstr.equals(logstrPre)) {
@@ -111,6 +113,14 @@ public class JobClient {
           logstrPre = logstr;
         }
       }
+      
+      if(job.getJobState() == JobState.SUCCEEDED){
+    	  LOG.info("Job completed with success");
+      }
+      else {
+    	  LOG.info("Job completed without success.");
+      }
+
     }
     catch (RemoteException re) {
       LOG.error("Remote exception! JobTracker not started or down!");
@@ -120,6 +130,8 @@ public class JobClient {
       LOG.error("JobClient down!");
       System.exit(Util.EXIT_JC_DOWN);
     }
+    
+
     
     return true;
   }

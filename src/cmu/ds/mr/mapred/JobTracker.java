@@ -220,23 +220,29 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 						}
 
 						if (ttype == TaskType.MAP) {
-							float currentprogress = jobTable.get(jid)
+							JobInProgress currentjob = jobTable.get(jid);
+							float currentprogress = currentjob
 									.getStatus().getMapProgress();
-							int num = jobTable.get(jid).getJobconf()
+							int num = currentjob.getJobconf()
 									.getNumMapTasks();
-							jobTable.get(jid)
+							currentjob
 									.getStatus()
 									.setMapProgress(
 											currentprogress + 1 / (float) num);
+							
 						} else if (ttype == TaskType.REDUCE) {
-							float currentprogress = jobTable.get(jid)
+							JobInProgress currentjob = jobTable.get(jid);
+							float currentprogress = currentjob
 									.getStatus().getReduceProgress();
-							int num = jobTable.get(jid).getJobconf()
+							int num = currentjob.getJobconf()
 									.getNumReduceTasks();
-							jobTable.get(jid)
+							currentjob
 									.getStatus()
 									.setReduceProgress(
 											currentprogress + 1 / (float) num);
+							if(currentjob.getStatus().getReduceProgress() > 0.999){
+								currentjob.getStatus().setState(JobState.SUCCEEDED);
+							}
 						}
 					}
 					if (tstate == TaskState.FAILED) {
