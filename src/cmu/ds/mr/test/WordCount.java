@@ -17,11 +17,11 @@ import cmu.ds.mr.mapred.Reducer;
  * */
 public class WordCount {
 
-  public static class Map extends MapReduceBase implements Mapper<Long, String, String, Integer> {
-    private final static Integer one = 1;
+  public static class Map extends MapReduceBase implements Mapper<Long, String, String, String> {
+    private final static String one = "1";
     private String word = "";
 
-    public void map(Long key, String value, OutputCollector<String, Integer> output) throws IOException {
+    public void map(Long key, String value, OutputCollector<String, String> output) throws IOException {
       String line = value.toString();
       StringTokenizer tokenizer = new StringTokenizer(line);
       while (tokenizer.hasMoreTokens()) {
@@ -31,13 +31,14 @@ public class WordCount {
     }
   }
 
-  public static class Reduce extends MapReduceBase implements Reducer<String, Integer, String, Integer> {
-    public void reduce(String key, Iterator<Integer> values, OutputCollector<String, Integer> output) throws IOException {
+  public static class Reduce extends MapReduceBase implements Reducer<String, String, String, String> {
+    public void reduce(String key, Iterator<String> values, OutputCollector<String, String> output) throws IOException {
       int sum = 0;
       while (values.hasNext()) {
-        sum += values.next();
+        int num = Integer.parseInt(values.next());
+        sum += num;
       }
-      output.collect(key, sum);
+      output.collect(key, sum + "");
     }
   }
 

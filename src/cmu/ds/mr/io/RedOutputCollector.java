@@ -12,12 +12,12 @@ import java.util.TreeMap;
 
 import cmu.ds.mr.util.Log;
 
-public class RedOutputCollector implements OutputCollector<String, Integer> {
+public class RedOutputCollector implements OutputCollector<String, String> {
 
   public static final Log LOG =
           new Log("RedOutputCollector.class");
   
-  private Map<String, Integer> outlist;
+  private Map<String, String> outlist;
 
   private String basePath;
   private int taskNum;
@@ -26,14 +26,16 @@ public class RedOutputCollector implements OutputCollector<String, Integer> {
     this.taskNum = taskNum;
     this.basePath = basePath;
     File file = new File(basePath);
+    if(file.exists())
+      file.delete();
     if(!file.exists())
       file.mkdirs();
     
-    outlist = new TreeMap<String, Integer>();
+    outlist = new TreeMap<String, String>();
   }
 
   @Override
-  public void collect(String key, Integer value) throws IOException {
+  public void collect(String key, String value) throws IOException {
     // Assume key is String
     outlist.put(key, value);
     
@@ -45,7 +47,7 @@ public class RedOutputCollector implements OutputCollector<String, Integer> {
     BufferedWriter bw = new BufferedWriter(
             new FileWriter(basePath + File.separator + name));
     try {
-      for (Entry<String, Integer> en : outlist.entrySet()) {
+      for (Entry<String, String> en : outlist.entrySet()) {
         bw.write(String.format("%s\t%d\n", en.getKey(), en.getValue()));
       }
     } finally {
