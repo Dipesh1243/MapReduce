@@ -38,7 +38,7 @@ public class WordCount {
         int num = Integer.parseInt(values.next());
         sum += num;
       }
-      output.collect(key, sum + "");
+      output.collect(key, String.valueOf(sum));
     }
   }
 

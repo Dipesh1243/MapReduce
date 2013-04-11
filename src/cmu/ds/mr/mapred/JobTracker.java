@@ -254,9 +254,9 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 								ts.setState(TaskState.FAILED);
 								sucorfail.add(ts);
 							}
-						}
+						}     
 
-						LOG.info("task:" + tasks.toString() + "failed");
+						LOG.info("task here:" + taskstatus.getTaskId().toString() + "failed");
 						taskscheduler.recoverFailedTask(taskstatus);
 
 					}

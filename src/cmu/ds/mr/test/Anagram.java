@@ -34,7 +34,7 @@ public class Anagram {
 
     public void map(Long key, String value, OutputCollector<String, String> output) throws IOException {
 
-      String word = value.toString();
+      String word = value.toLowerCase().toString();
       char[] wordChars = word.toCharArray();
       Arrays.sort(wordChars);
       String sortedWord = new String(wordChars);

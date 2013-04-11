@@ -30,18 +30,20 @@ public class TaskRunner extends Thread {
   public void run() {
     try {
       task.startTask(task, taskTrackerProxy);
+      LOG.info(String.format("Task %s successful.", task.toString()));
+      
     } catch (Exception e) {
       try {
         taskTrackerProxy.fail(task.getTaskStatus().getTaskId());
       } catch (IOException e1) {
         LOG.error("Task fails. IOException: " + e);
-        System.exit(Util.EXIT_TASK_FAIL);
+        this.interrupt();
       } catch (InterruptedException e1) {
         LOG.error("Task fails. InterruptedException: " + e);
-        System.exit(Util.EXIT_TASK_FAIL);
+        this.interrupt();
       }
       LOG.error("Task fails. Exception: " + e);
-      System.exit(Util.EXIT_TASK_FAIL);
+      this.interrupt();
     } 
   }
 

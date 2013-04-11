@@ -48,7 +48,7 @@ public class RedOutputCollector implements OutputCollector<String, String> {
             new FileWriter(basePath + File.separator + name));
     try {
       for (Entry<String, String> en : outlist.entrySet()) {
-        bw.write(String.format("%s\t%d\n", en.getKey(), en.getValue()));
+        bw.write(String.format("%s\t%s\n", en.getKey(), en.getValue()));
       }
     } finally {
       bw.close();
