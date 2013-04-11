@@ -13,12 +13,14 @@ public class TaskTrackerStatus implements Serializable {
   private List<TaskStatus> taskStatusList;
 
   private int numFreeSlots;
+  private String taskTrackername;
 
   // set only through constructor
-  public TaskTrackerStatus(List<TaskStatus> taskStatusList, int numFreeSlots) {
+  public TaskTrackerStatus(String name, List<TaskStatus> taskStatusList, int numFreeSlots) {
     super();
     this.taskStatusList = taskStatusList;
     this.numFreeSlots = numFreeSlots;
+    this.taskTrackername = name;
   }
 
   public List<TaskStatus> getTaskStatusList() {
@@ -27,6 +29,10 @@ public class TaskTrackerStatus implements Serializable {
 
   public int getNumFreeSlots() {
     return numFreeSlots;
+  }
+  
+  public String getTaskTrackername() {
+	    return taskTrackername;
   }
 
 }

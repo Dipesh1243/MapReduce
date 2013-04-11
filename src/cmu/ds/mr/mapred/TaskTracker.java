@@ -183,6 +183,9 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   
   private void startTaskTracker() throws IOException {
     // TODO get run or stop instruction from JobTracker
+	  
+	taskTrackerName = InetAddress.getLocalHost().getCanonicalHostName() + "-" + Integer.toString(jobTrackerProxy.getNewTaskTrackerId());
+	LOG.info("Tasktracker name: " + taskTrackerName);
     LOG.info("Starting taskTracker...");
     
     try{
@@ -191,16 +194,27 @@ public class TaskTracker implements TaskUmbilicalProtocol {
         
         // build current task tracker status
         List<TaskStatus> taskStatusList = getAllTaskStatus();
-        TaskTrackerStatus tts = new TaskTrackerStatus(taskStatusList, numFreeSlots.get());
+        TaskTrackerStatus tts = new TaskTrackerStatus(taskTrackerName, taskStatusList, numFreeSlots.get());
         
         //LOG.debug(String.format("#freeSlot:%d", numFreeSlots.get()));
         
         // transmit heartbeat
+        LOG.debug("TaskTracker: start heartbeat");
         Task retTask = jobTrackerProxy.heartbeat(tts);
-        //LOG.info("TaskTracker: recv heartbeat");
+        LOG.debug("TaskTracker: recv heartbeat");
         
         // retTask == null means JobTracker has no available task to assign
         if(retTask != null) {
+        	
+        	
+          //TODO: need to check this work or not!!!	
+          //if trynum = -1, then this is a intialize response, clean up the tasklist;
+          if(retTask.getTaskStatus().getTryNum() == -1){
+        	  taskMap = new HashMap<TaskID, Task>();
+              taskDoneMap = new HashMap<TaskID, Task>();
+        	  continue;
+          }
+          
           LOG.info("get new task id: " + retTask.taskId.toString());
           // put it in the taskTracker's table
           taskMap.put(retTask.taskId, retTask);
@@ -254,6 +268,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     }
     // read configure file
     LOG.setInfo(true);
+    LOG.setDebug(false);
     JobConf conf = new JobConf();
     LOG.info("prepare to create TaskTracker");
     TaskTracker tt = new TaskTracker(conf, args[0]);

@@ -19,6 +19,7 @@ import java.util.Properties;
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.io.FileSplit;
 import cmu.ds.mr.io.FileSplitter;
+import cmu.ds.mr.mapred.JobStatus.JobState;
 import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
@@ -98,6 +99,10 @@ public class JobClient {
         JobStatus jobStatusNew = jobTrackerProxy.getJobStatus(jid);
         job.setJobStatus(jobStatusNew);
   
+        if(job.getJobState() == JobState.FAILED){
+        	LOG.info("Job failed");
+        	return false;
+        }
         String logstr = String.format("%s: map %.1f\treduce %.1f", jid.toString(),
                 job.mapProgress(), job.reduceProgress());
         if(!logstr.equals(logstrPre)) {

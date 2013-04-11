@@ -34,6 +34,9 @@ public class Util {
   public static final String JOBTRACK_ADDR = "mapred.jobtracker.address";
   
   public static final int MAX_TRY = 3;
+  
+  public static final int TIME_OUT_MAX = 3;
+  
   //  exit code
   public static final int EXIT_JT_DOWN = -1;  // job tracker down
   public static final int EXIT_JT_NOTSTART = -2;  // job tracker not start

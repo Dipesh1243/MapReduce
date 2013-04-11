@@ -7,9 +7,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.TreeMap;
 
 
 import cmu.ds.mr.conf.JobConf;
+import cmu.ds.mr.mapred.JobStatus.JobState;
 import cmu.ds.mr.mapred.TaskStatus.TaskState;
 import cmu.ds.mr.mapred.TaskStatus.TaskType;
 import cmu.ds.mr.util.Log;
@@ -20,12 +22,15 @@ class TaskScheduler {
   
   private Queue<JobInProgress> jobQueue;
   private Map<JobID, JobInProgress> jobTable;
-  private Queue<MapTask> maptaskQueue = new LinkedList();
-  private Queue<ReduceTask> reducetaskQueue = new LinkedList();  
+  private Queue<MapTask> maptaskQueue;
+  private Queue<ReduceTask> reducetaskQueue;  
+
   
   public TaskScheduler(Queue<JobInProgress> jobQueue, Map<JobID, JobInProgress> jobTable){
     this.jobQueue = jobQueue;
     this.jobTable = jobTable;
+    this.maptaskQueue = new LinkedList<MapTask>();
+    this.reducetaskQueue = new LinkedList<ReduceTask>();  
     LOG.setDebug(true);
   }
   /**
@@ -61,10 +66,11 @@ class TaskScheduler {
           TaskID tid = new TaskID(jip.getJobid(), TaskType.REDUCE, tstatus.getTaskNum(), tstatus.getTryNum()+1);
           ret = reducetaskQueue.add(new ReduceTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.REDUCE)));
         } 
-      
     }
     else{
-      LOG.info("Try time exceeded.");
+      LOG.info("Task:" +  tstatus.getTaskId().toString() + " try time exceed.");
+      LOG.info("Job:" +  jip.getJobid().toString() + " fail.");
+      jip.getStatus().setState(JobState.FAILED);
     }
     return ret;
   }
