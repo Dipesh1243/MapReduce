@@ -41,6 +41,7 @@ public class Util {
   public static final int EXIT_JT_DOWN = -1;  // job tracker down
   public static final int EXIT_JT_NOTSTART = -2;  // job tracker not start
   public static final int EXIT_JC_DOWN = -3;  // jobClient not down
+  public static final int EXIT_TASK_FAIL = -11;  // task fails
 
   public static String stringifyException(Throwable e) {
     StringWriter stm = new StringWriter();

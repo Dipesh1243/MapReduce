@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.util.Log;
+import cmu.ds.mr.util.Util;
 
 /**
  * Class for running mappaer and reducer in a separate thread
@@ -29,23 +30,21 @@ public class TaskRunner extends Thread {
   public void run() {
     try {
       task.startTask(task, taskTrackerProxy);
-    } catch (IOException e) {
-      LOG.error("IOException: " + e);
-    } catch (ClassNotFoundException e) {
-      LOG.error("ClassNotFoundException: " + e);
-    } catch (InterruptedException e) {
-      LOG.info("Class being killed: " + e);
-    } catch (RuntimeException e) {
-      LOG.error("RuntimeException: " + e);
-    } catch (InstantiationException e) {
-      LOG.error("ClassNotFoundException: " + e);
-    } catch (IllegalAccessException e) {
-      LOG.error("IllegalAccessException: " + e);
-    } catch (InvocationTargetException e) {
-      LOG.error("InvocationTargetException: " + e);
-    } catch (NoSuchMethodException e) {
-      LOG.error("NoSuchMethodException: " + e);
-    }
+      LOG.info(String.format("Task %s successful.", task.toString()));
+      
+    } catch (Exception e) {
+      try {
+        taskTrackerProxy.fail(task.getTaskStatus().getTaskId());
+      } catch (IOException e1) {
+        LOG.error("Task fails. IOException: " + e);
+        this.interrupt();
+      } catch (InterruptedException e1) {
+        LOG.error("Task fails. InterruptedException: " + e);
+        this.interrupt();
+      }
+      LOG.error("Task fails. Exception: " + e);
+      this.interrupt();
+    } 
   }
 
 }

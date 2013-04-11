@@ -15,7 +15,7 @@ import cmu.ds.mr.mapred.Reducer;
  * Example word count program.
  * Adopted from http://www.cloudera.com/content/cloudera-content/cloudera-docs/HadoopTutorial/CDH4/Hadoop-Tutorial/ht_topic_5_1.html
  * */
-public class WordCount {
+public class WordCountError {
 
   public static class Map extends MapReduceBase implements Mapper<Long, String, String, String> {
     private final static String one = "1";
@@ -38,7 +38,7 @@ public class WordCount {
         int num = Integer.parseInt(values.next());
         sum += num;
       }
-      output.collect(key, String.valueOf(sum));
+      output.collect(key, sum + "");
     }
   }
 

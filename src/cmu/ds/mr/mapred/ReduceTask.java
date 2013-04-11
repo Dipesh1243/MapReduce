@@ -22,11 +22,11 @@ import cmu.ds.mr.util.Util;
 
 public class ReduceTask extends Task {
   
-  private Map<String, List<Integer>> redInputMap; 
+  private Map<String, List<String>> redInputMap; 
   
   public ReduceTask(TaskID taskid, JobConf taskconf, TaskStatus taskStatus){
     super(taskid, taskconf, taskStatus);
-    redInputMap = new TreeMap<String, List<Integer>>();
+    redInputMap = new TreeMap<String, List<String>>();
   }
 
   @Override
@@ -46,7 +46,7 @@ public class ReduceTask extends Task {
     //int nred = taskConf.getNumReduceTasks();
     RedOutputCollector output = new RedOutputCollector(basePath, taskNum);
     
-    for(Entry<String, List<Integer>> en : redInputMap.entrySet()) {
+    for(Entry<String, List<String>> en : redInputMap.entrySet()) {
       reducer.reduce(en.getKey(), en.getValue().iterator(), output);
     } 
     
@@ -81,11 +81,11 @@ public class ReduceTask extends Task {
             while((line = br.readLine()) != null) {
               String[] strs = line.split("\\t");
               String key = strs[0];
-              int val = Integer.parseInt(strs[1]);
+              String val = strs[1];
               if(redInputMap.containsKey(key))
                 redInputMap.get(key).add(val);
               else {
-                List<Integer> list = new ArrayList<Integer>();
+                List<String> list = new ArrayList<String>();
                 list.add(val);
                 redInputMap.put(key, list);
               }

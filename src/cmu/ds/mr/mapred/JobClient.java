@@ -54,13 +54,13 @@ public class JobClient {
       if (System.getSecurityManager() == null) {
         System.setSecurityManager(new SecurityManager());
       }
-    // get job tracker start address fomr jobConf
-    Registry registry = LocateRegistry.getRegistry(prop.getProperty(Util.JOBTRACK_ADDR));
-    
-    //TODO: TEST
-    //Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
-    
-    jobTrackerProxy = (JobSubmissionProtocol) registry.lookup(Util.SERVICE_NAME);
+      // get job tracker start address fomr jobConf
+      Registry registry = LocateRegistry.getRegistry(prop.getProperty(Util.JOBTRACK_ADDR));
+      
+      //TODO: TEST
+      //Registry registry = LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
+      
+      jobTrackerProxy = (JobSubmissionProtocol) registry.lookup(Util.SERVICE_NAME);
     }
     catch (RemoteException re) {
       LOG.error("Remote exception! JobTracker not started");
@@ -72,17 +72,37 @@ public class JobClient {
     prop.load(new FileInputStream(Util.CONFIG_PATH));
   }
 
-  public static RunningJob runJob(JobConf jobConf) throws IOException, InterruptedException, NotBoundException {
-    JobClient jc = new JobClient(jobConf);
-    RunningJob job = jc.submitJob(jobConf);
-
-    // query status and state every second
-    if (!jc.monitorAndPrintJob(jobConf, job)) {
-      throw new IOException("Job failed.");
+  public static RunningJob runJob(JobConf jobConf) {
+    
+    try {
+      JobClient jc = new JobClient(jobConf);
+      RunningJob job = jc.submitJob(jobConf);
+      
+      // query status and state every second
+      if (!jc.monitorAndPrintJob(jobConf, job)) {
+        LOG.error("Job failed.");
+        System.exit(Util.EXIT_JT_DOWN);
+      }
+      
+      // job done
+      return job;
+    }
+    catch (IOException ie) {
+      LOG.error("Job cannot be submitted.");
+      System.exit(Util.EXIT_JT_NOTSTART);
+    }
+    catch (NotBoundException ne) {
+      LOG.error("Job cannot be submitted.");
+      System.exit(Util.EXIT_JT_NOTSTART);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      
+      LOG.error("Job failed. Exception: ");
+      System.exit(Util.EXIT_JT_DOWN);
     }
     
-    // job done
-    return job;
+    return null;
   }
 
   /**

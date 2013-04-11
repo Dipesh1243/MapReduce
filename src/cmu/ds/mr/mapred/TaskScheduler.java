@@ -57,7 +57,7 @@ class TaskScheduler {
     TaskType ttype = tstatus.getType();
     JobInProgress jip = jobTable.get(jid);
     boolean ret = false;
-    if(tstatus.getTaskNum() < Util.MAX_TRY){
+    if(tstatus.getTryNum() < Util.MAX_TRY){
         if(ttype == TaskType.MAP){
           TaskID tid = new TaskID(jip.getJobid(), TaskType.MAP, tstatus.getTaskNum(), tstatus.getTryNum()+1);
           ret = maptaskQueue.add(new MapTask(tid, jip.getJobconf(), new TaskStatus(tid, TaskState.READY, TaskType.MAP)));
