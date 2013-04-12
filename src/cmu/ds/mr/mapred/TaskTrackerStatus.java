@@ -7,7 +7,9 @@ import java.util.List;
  * TaskTrackerStatus class used to communication between TaskTracker and JobTracker for all task
  * status in current taskTracker
  * 
+ * @author Zeyuan Li
  * */
+@SuppressWarnings("serial")
 public class TaskTrackerStatus implements Serializable {
 
   private List<TaskStatus> taskStatusList;

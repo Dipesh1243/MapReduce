@@ -5,12 +5,10 @@ import java.io.Serializable;
 /**
  * Task status to keep track of task progress and state
  * 
+ * @author Zeyuan Li
  * */
 public class TaskStatus implements Serializable {
   
-  /**
-   * 
-   */
   private static final long serialVersionUID = 1L;
 
   public static enum TaskState {
@@ -38,8 +36,6 @@ public class TaskStatus implements Serializable {
   private TaskType type;
   private int taskNum;
   private int tryNum;
-  
-  //private float progress;
   
   public TaskStatus(TaskID taskId, TaskState state, TaskType type) {
     super();

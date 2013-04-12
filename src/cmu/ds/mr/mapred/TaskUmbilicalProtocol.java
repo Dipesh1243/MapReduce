@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.rmi.Remote;
 
 /** 
- * Adapted from Hadoop:
+ * Adapted and changed from Hadoop:
  * 
  * Protocol that task child process uses to contact its parent process.  The
  * parent is a daemon which which polls the central master for a new map or
@@ -60,93 +60,19 @@ interface TaskUmbilicalProtocol{
    * */
 
   /**
-   * Called when a child task process starts, to get its task.
-   * @param context the JvmContext of the JVM w.r.t the TaskTracker that
-   *  launched it
-   * @return Task object
-   * @throws IOException 
-   */
-  //JvmTask getTask(JvmContext context) throws IOException;
-  
-  /**
    * Report child's failure to parent.
    * 
    * @param taskId task-id of the child
-   * @param taskStatus status of the child
    * @throws IOException
    * @throws InterruptedException
    * @return True if the task is known
    */
   boolean fail(TaskID taskId) 
   throws IOException, InterruptedException;
-  
-  /** Report error messages back to parent.  Calls should be sparing, since all
-   *  such messages are held in the job tracker.
-   *  @param taskid the id of the task involved
-   *  @param trace the text to report
-   */
-  //void reportDiagnosticInfo(TaskAttemptID taskid, String trace) throws IOException;
-  
-  /**
-   * Report the record range which is going to process next by the Task.
-   * @param taskid the id of the task involved
-   * @param range the range of record sequence nos
-   * @throws IOException
-   */
-  //void reportNextRecordRange(TaskAttemptID taskid, SortedRanges.Range range) throws IOException;
-
-  /** Periodically called by child to check if parent is still alive. 
-   * @return True if the task is known
-   */
-//  boolean ping(TaskID taskid) throws IOException;
 
   /** Report that the task is successfully completed.  Failure is assumed if
    * the task process exits without calling this.
    * @param taskid task's id
    */
   void done(TaskID taskid) throws IOException;
-  
-  /** 
-   * Report that the task is complete, but its commit is pending.
-   * 
-   * @param taskId task's id
-   * @param taskStatus status of the child
-   * @throws IOException
-   */
-//  void commitPending(TaskAttemptID taskId, TaskStatus taskStatus) 
-//  throws IOException, InterruptedException;  
-
-  /**
-   * Polling to know whether the task can go-ahead with commit 
-   * @param taskid
-   * @return true/false 
-   * @throws IOException
-   */
-//  boolean canCommit(TaskAttemptID taskid) throws IOException;
-
-  /** Report that a reduce-task couldn't shuffle map-outputs.*/
-//  void shuffleError(TaskAttemptID taskId, String message) throws IOException;
-  
-  /** Report that the task encounted a local filesystem error.*/
-//  void fsError(TaskAttemptID taskId, String message) throws IOException;
-
-  /** Called by a reduce task to get the map output locations for finished maps.
-   * Returns an update centered around the map-task-completion-events. 
-   * The update also piggybacks the information whether the events copy at the 
-   * task-tracker has changed or not. This will trigger some action at the 
-   * child-process.
-   *
-   * @param taskId the reduce task id
-   * @param fromIndex the index starting from which the locations should be 
-   * fetched
-   * @param maxLocs the max number of locations to fetch
-   * @param id The attempt id of the task that is trying to communicate
-   * @return A {@link MapTaskCompletionEventsUpdate} 
-   */
-//  MapTaskCompletionEventsUpdate getMapCompletionEvents(JobID jobId, 
-//                                                       int fromIndex, 
-//                                                       int maxLocs,
-//                                                       TaskAttemptID id) 
-//  throws IOException;
-
 }

@@ -13,6 +13,7 @@ import cmu.ds.mr.mapred.Reducer;
 
 /**
  * Example word count program.
+ * 
  * Adopted from http://www.cloudera.com/content/cloudera-content/cloudera-docs/HadoopTutorial/CDH4/Hadoop-Tutorial/ht_topic_5_1.html
  * */
 public class WordCount {

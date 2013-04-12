@@ -1,6 +1,5 @@
 package cmu.ds.mr.mapred;
 
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
@@ -11,15 +10,16 @@ import cmu.ds.mr.util.Util;
 /**
  * Class for running mappaer and reducer in a separate thread
  * 
+ * @author Zeyuan Li
  * */
 public class TaskRunner implements Runnable {
-  
+
   public static final Log LOG = new Log("TaskRunner.class");
-  
+
   private Task task;
+
   private TaskTracker taskTrackerProxy;
-  
-  
+
   public TaskRunner(Task task, TaskTracker taskTrackerProxy) {
     super();
     this.task = task;
@@ -31,7 +31,7 @@ public class TaskRunner implements Runnable {
     try {
       task.startTask(task, taskTrackerProxy);
       LOG.info(String.format("Task %s successful.", task.taskId.toString()));
-      
+
     } catch (Exception e) {
       try {
         taskTrackerProxy.fail(task.getTaskStatus().getTaskId());
@@ -41,7 +41,7 @@ public class TaskRunner implements Runnable {
         LOG.error("Task fails.");
       }
       LOG.error("Task fails.");
-    } 
+    }
   }
 
 }

@@ -20,6 +20,12 @@ import cmu.ds.mr.io.RedOutputCollector;
 import cmu.ds.mr.util.Util;
 
 
+/**
+ * ReduceTask: the reduce task class to run the reduce class
+ * 
+ * @author Zeyuan Li
+ * */
+@SuppressWarnings("serial")
 public class ReduceTask extends Task {
   
   private Map<String, List<String>> redInputMap; 

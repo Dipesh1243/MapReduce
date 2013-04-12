@@ -1,8 +1,5 @@
 package cmu.ds.mr.io;
 
-/**
- * Adapted From ASF
- * */
 import java.io.IOException;
 
 /**

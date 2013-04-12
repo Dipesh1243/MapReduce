@@ -21,6 +21,8 @@ import java.io.IOException;
 
 
 /** 
+ * Adapted and changed from Hadoop.
+ * 
  * <code>RunningJob</code> is the user-interface to query for details on a 
  * running Map-Reduce job.
  * 
@@ -46,20 +48,6 @@ public interface RunningJob {
   public String getJobName();
 
   /**
-   * Get the path of the submitted job configuration.
-   * 
-   * @return the path of the submitted job configuration.
-   */
-  //public String getJobFile();
-
-  /**
-   * Get the URL where some job progress information will be displayed.
-   * 
-   * @return the URL where some job progress information will be displayed.
-   */
-  //public String getTrackingURL();
-
-  /**
    * Get the <i>progress</i> of the job's map-tasks, as a float between 0.0 
    * and 1.0.  When all map tasks have completed, the function returns 1.0.
    * 
@@ -76,24 +64,6 @@ public interface RunningJob {
    * @throws IOException
    */
   public float reduceProgress() throws IOException;
-
-  /**
-   * Get the <i>progress</i> of the job's cleanup-tasks, as a float between 0.0 
-   * and 1.0.  When all cleanup tasks have completed, the function returns 1.0.
-   * 
-   * @return the progress of the job's cleanup-tasks.
-   * @throws IOException
-   */
-  //public float cleanupProgress() throws IOException;
-
-  /**
-   * Get the <i>progress</i> of the job's setup-tasks, as a float between 0.0 
-   * and 1.0.  When all setup tasks have completed, the function returns 1.0.
-   * 
-   * @return the progress of the job's setup-tasks.
-   * @throws IOException
-   */
-  //public float setupProgress() throws IOException;
 
   /**
    * Check if the job is finished or not. 
@@ -136,56 +106,9 @@ public interface RunningJob {
   public void killJob() throws IOException;
   
   /**
-   * Set the priority of a running job.
-   * @param priority the new priority for the job.
-   * @throws IOException
-   */
-  //public void setJobPriority(String priority) throws IOException;
-  
-  /**
    * Set job status (since we have update it)
    * 
    * @param jobStatusNew the updated job status
    * */
   public void setJobStatus(JobStatus jobStatusNew) throws IOException;
-  
-  /**
-   * Get events indicating completion (success/failure) of component tasks.
-   *  
-   * @param startFrom index to start fetching events from
-   * @return an array of {@link TaskCompletionEvent}s
-   * @throws IOException
-   */
-//  public TaskCompletionEvent[] getTaskCompletionEvents(int startFrom) 
-//  throws IOException;
-  
-  /**
-   * Kill indicated task attempt.
-   * 
-   * @param taskId the id of the task to be terminated.
-   * @param shouldFail if true the task is failed and added to failed tasks 
-   *                   list, otherwise it is just killed, w/o affecting 
-   *                   job failure status.  
-   * @throws IOException
-   */
-  //public void killTask(TaskAttemptID taskId, boolean shouldFail) throws IOException;
-  
-  /**  Applications should rather use {@link #killTask(TaskAttemptID, boolean)}*/
-  //public void killTask(String taskId, boolean shouldFail) throws IOException;
-  
-  /**
-   * Gets the counters for this job.
-   * 
-   * @return the counters for this job.
-   * @throws IOException
-   */
-  //public Counters getCounters() throws IOException;
-  
-  /**
-   * Gets the diagnostic messages for a given task attempt.
-   * @param taskid
-   * @return the list of diagnostic messages for the task
-   * @throws IOException
-   */
-  //public String[] getTaskDiagnostics(TaskAttemptID taskid) throws IOException;
 }

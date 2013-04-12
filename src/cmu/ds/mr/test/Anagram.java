@@ -29,7 +29,8 @@ public class Anagram {
    * @author subbu iyer
    */
 
-  public static class AnagramMapper extends MapReduceBase implements Mapper<Long, String, String, String> {
+  public static class AnagramMapper extends MapReduceBase implements
+          Mapper<Long, String, String, String> {
 
     public void map(Long key, String value, OutputCollector<String, String> output)
             throws IOException {

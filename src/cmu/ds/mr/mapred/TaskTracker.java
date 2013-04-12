@@ -27,91 +27,14 @@ import cmu.ds.mr.mapred.TaskStatus.TaskType;
 import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
+/**
+ * TaskTracker: the class for launch, kill tasks and heartbeating with jobTracker
+ * 
+ * @author Zeyuan Li
+ * */
 public class TaskTracker implements TaskUmbilicalProtocol {
 
   public static final Log LOG = new Log("TaskTracker.class");
-
-  // private class TaskLauncher extends Thread {
-  // private List<Task> tasksQueue;
-  //
-  // public TaskLauncher() {
-  // tasksQueue = new LinkedList<Task>();
-  //
-  // setDaemon(true);
-  // setName("TaskLauncher for task");
-  // }
-  //
-  // public int getNumFreeSlots() {
-  // return numFreeSlots.get();
-  // }
-  //
-  // public void addToTaskQueue(Task task) {
-  // synchronized (tasksQueue) {
-  // tasksQueue.add(task);
-  // tasksQueue.notifyAll();
-  // }
-  // }
-  //
-  // public void cleanTaskQueue() {
-  // tasksQueue.clear();
-  // }
-  //
-  // public void addFreeSlot() {
-  // numFreeSlots.incrementAndGet();
-  // synchronized (numFreeSlots) {
-  // numSlots++;
-  //
-  // LOG.info("addFreeSlot : current free slots : " + numSlots);
-  // numSlots.notifyAll();
-  // }
-  // }
-  //
-  // public void run() {
-  // //while (!Thread.interrupted()) {
-  // while (true) {
-  // try {
-  // Task task;
-  // synchronized (tasksQueue) {
-  // while (tasksQueue.isEmpty()) {
-  // tasksQueue.wait();
-  // }
-  // // removeFirst
-  // task = tasksQueue.remove(0);
-  // LOG.info("Launching : " + task.taskStatus.getTaskId());
-  // }
-  // //wait for a slot to run
-  // synchronized (numSlots) {
-  // while (numSlots == 0) {
-  // numSlots.wait();
-  // }
-  // LOG.info("In TaskLauncher, current free slots : " + numSlots +
-  // " and trying to launch "+ task.taskStatus.getTaskId());
-  // numSlots--;
-  // assert numSlots >= 0;
-  // }
-  // // check for valid tasks
-  // synchronized (task) {
-  // if (task.taskStatus.getState() == TaskStatus.TaskState.FAILED &&
-  // task.taskStatus.getState() == TaskStatus.TaskState.KILLED) {
-  // addFreeSlot();
-  // continue;
-  // }
-  // }
-  //
-  // // launch the task when we have free slot
-  // TaskRunner runner = task.createRunner(TaskTracker.this, task);
-  // runner.start();
-  // }
-  // // task tracker finished
-  // catch (InterruptedException e) {
-  // return;
-  // }
-  // catch (Throwable th) {
-  // LOG.error("TaskLauncher error " + Util.stringifyException(th));
-  // }
-  // }
-  // }
-  // }
 
   // running task table
   private String taskTrackerName; // taskTrackerName assigned by jobtracker to uniquely identify a
@@ -120,8 +43,8 @@ public class TaskTracker implements TaskUmbilicalProtocol {
   private Map<TaskID, Task> taskMap; // running tasks in taskTracker
 
   private Map<TaskID, Task> taskDoneMap; // finisehed task map
-  
-  private Map<TaskID, Thread> threadMap;  // running thread map
+
+  private Map<TaskID, Thread> threadMap; // running thread map
 
   private String localRootDir; // local map output root dir
 
@@ -133,10 +56,6 @@ public class TaskTracker implements TaskUmbilicalProtocol {
 
   // JobTracker stub (using RMI)
   private InterTrackerProtocol jobTrackerProxy;
-
-  // Map and reduce launcher (separate daemon process)
-  // private TaskLauncher mapLauncher;
-  // private TaskLauncher redLauncher;
 
   public TaskTracker(JobConf conf, String jobTrackerAddrStr) throws NotBoundException,
           UnknownHostException {
@@ -150,7 +69,6 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       this.jobTrackerAddrStr = jobTrackerAddrStr;
       Registry registry = LocateRegistry.getRegistry(jobTrackerAddrStr);
       jobTrackerProxy = (InterTrackerProtocol) registry.lookup(Util.SERVICE_NAME_INTERTRACKER);
-      // TODO get a taskTracker name from jobTracker
 
       localRootDir = (String) conf.getProperties().get(Util.LOCAL_ROOT_DIR);
 
@@ -177,7 +95,6 @@ public class TaskTracker implements TaskUmbilicalProtocol {
 
   @Override
   public synchronized void done(TaskID taskid) throws IOException {
-    // taskMap.remove(taskid);
     // notify JobTracker
     Task ts = taskMap.get(taskid);
     ts.taskStatus.setState(TaskState.SUCCEEDED);
@@ -185,13 +102,9 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     taskDoneMap.put(taskid, ts);
 
     numFreeSlots.incrementAndGet();
-    
-    //LOG.info(String.format("Task %s successful.", taskid.toString()));
   }
 
   private void startTaskTracker() throws IOException {
-    // TODO get run or stop instruction from JobTracker
-
     try {
       taskTrackerName = InetAddress.getLocalHost().getCanonicalHostName() + "-"
               + Integer.toString(jobTrackerProxy.getNewTaskTrackerId());
@@ -206,8 +119,6 @@ public class TaskTracker implements TaskUmbilicalProtocol {
         TaskTrackerStatus tts = new TaskTrackerStatus(taskTrackerName, taskStatusList,
                 numFreeSlots.get());
 
-        // LOG.debug(String.format("#freeSlot:%d", numFreeSlots.get()));
-
         // transmit heartbeat
         LOG.debug("TaskTracker: start heartbeat");
         Task retTask = jobTrackerProxy.heartbeat(tts);
@@ -216,7 +127,6 @@ public class TaskTracker implements TaskUmbilicalProtocol {
         // retTask == null means JobTracker has no available task to assign
         if (retTask != null) {
 
-          // TODO: need to check this work or not!!!
           // if trynum = -1, then this is a intialize response, clean up the tasklist;
           if (retTask.getTaskStatus().getTryNum() == -1) {
             taskMap = new HashMap<TaskID, Task>();
@@ -224,12 +134,12 @@ public class TaskTracker implements TaskUmbilicalProtocol {
             continue;
           }
           // check if it is a kill instruction
-          else if(retTask.getTaskStatus().getState() == TaskState.KILLED) {
+          else if (retTask.getTaskStatus().getState() == TaskState.KILLED) {
             TaskID taskid = retTask.getTaskStatus().getTaskId();
             // kill task
-            if(threadMap.containsKey(taskid))
-              threadMap.get(taskid).interrupt(); 
-            
+            if (threadMap.containsKey(taskid))
+              threadMap.get(taskid).interrupt();
+
             LOG.info("task killed: " + taskid.toString());
             threadMap.remove(taskid);
             continue;
@@ -249,10 +159,6 @@ public class TaskTracker implements TaskUmbilicalProtocol {
             th.start();
           } else
             assert numFreeSlots.get() > 0 : String.format("numFreeSlots:%d", numFreeSlots.get());
-          // if(retTask.taskStatus.getType() == TaskType.MAP)
-          // mapLauncher.addToTaskQueue(retTask);
-          // else
-          // redLauncher.addToTaskQueue(retTask);
         }
       }
     } catch (RemoteException re) {
@@ -271,16 +177,15 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     }
 
     // delete finished task once it has used after heartbeat
-    for(Iterator<Entry<TaskID, Task>> it = taskDoneMap.entrySet().iterator(); it.hasNext();) {
-      Entry<TaskID, Task> en  = it.next();
+    for (Iterator<Entry<TaskID, Task>> it = taskDoneMap.entrySet().iterator(); it.hasNext();) {
+      Entry<TaskID, Task> en = it.next();
       if (taskMap.containsKey(en.getKey())) {
         taskMap.remove(en.getKey());
         threadMap.remove(en.getKey());
         it.remove();
       }
     }
-    
-    
+
     return res;
   }
 

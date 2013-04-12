@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-
 import cmu.ds.mr.io.FileSplit;
 import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
 /**
- * JobConf 
+ * JobConf: the configure class for job. It contains various info for job to run
+ * 
  * */
 public class JobConf implements Serializable {
   private static final Log LOG = new Log("JobConf.class");
@@ -23,32 +23,34 @@ public class JobConf implements Serializable {
   private ArrayList<Object> resources = new ArrayList<Object>();
 
   private String inpath;
+
   private String outpath;
+
   private String mapOutPath;
+
   private String jobTrackerAddr;
+
   private int numReduceTasks;
+
   private int numMapTasks;
 
   private Class<?> mapclass;
+
   private Class<?> redclass;
-  private Class mainclass;
-  private Class outputKeyClass;
-  private Class outputValueClass;
-  
+
   private List<FileSplit> splitFiles;
-  
+
   private Properties properties = new Properties();
 
-  
-  // read configure file in 
+  // read configure file in
   public JobConf() throws FileNotFoundException, IOException {
     properties = new Properties();
     properties.load(new FileInputStream(Util.CONFIG_PATH));
-    
+
     // set default numReduceTask
     numReduceTasks = 4;
   }
-  
+
   public List<FileSplit> getSplitFiles() {
     return splitFiles;
   }
@@ -63,23 +65,6 @@ public class JobConf implements Serializable {
 
   public void setJobTrackerAddr(String jobTrackerAddr) {
     this.jobTrackerAddr = jobTrackerAddr;
-  }
-
-  
-  public Class getOutputKeyClass() {
-    return outputKeyClass;
-  }
-
-  public void setOutputKeyClass(Class outputKeyClass) {
-    this.outputKeyClass = outputKeyClass;
-  }
-
-  public Class getOutputValueClass() {
-    return outputValueClass;
-  }
-
-  public void setOutputValueClass(Class outputValueClass) {
-    this.outputValueClass = outputValueClass;
   }
 
   public int getNumReduceTasks() {
@@ -152,11 +137,11 @@ public class JobConf implements Serializable {
 
   public void setOutpath(String outpath) throws IOException {
     File f = new File(outpath);
-    if(f.exists()) {
+    if (f.exists()) {
       LOG.error("Output file exists!");
       System.exit(Util.EXIT_OUT_EXIST);
     }
-      
+
     this.outpath = outpath;
   }
 

@@ -4,11 +4,18 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
-
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.util.Log;
 
-public abstract class Task implements Serializable{
+/**
+ * The abstract class for Task
+ * 
+ * @see MapTask
+ * @see RedceTask
+ * @author Zeyuan Li
+ * */
+@SuppressWarnings("serial")
+public abstract class Task implements Serializable {
   private static final Log LOG = new Log("Task.class");
 
   // JobID is in taskId, use task.getJobid() to get JobId
@@ -31,11 +38,7 @@ public abstract class Task implements Serializable{
   }
 
   /**
-   * Run this task as a part of the named job. This method is executed in the child process and is
-   * what invokes user-supplied map, reduce, etc. methods.
-   * 
-   * @param taskTrackerProxy
-   *          for progress reports
+   * run the task
    */
   public abstract void startTask(Task task, TaskUmbilicalProtocol taskTrackerProxy)
           throws IOException, ClassNotFoundException, InterruptedException, RuntimeException,

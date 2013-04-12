@@ -3,9 +3,10 @@ package cmu.ds.mr.io;
 import java.io.Serializable;
 
 /**
- * FileSplit: the class to represent split files
- * Assume the input file format is fixed to lines of texts.
+ * FileSplit: the class to represent split files Assume the input file format is fixed to lines of
+ * texts. Input and output are all String
  * 
+ * @author Zeyuan Li
  * */
 public class FileSplit implements Serializable {
   private String path;

@@ -1,9 +1,6 @@
 package cmu.ds.mr.mapred;
 
-
 import java.io.IOException;
-
-
 
 import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.JobStatus.JobState;
@@ -17,18 +14,20 @@ public class Job implements RunningJob {
 
   private static final Log LOG = new Log("Job.class");
 
-  // TODO: duplicate JobID field in Job
-  private JobID jid;  
+  private JobID jid;
+
   private String message;
+
   private JobConf jobConf;
+
   private JobStatus jobStatus;
-  
+
   public Job(JobID jid, JobConf jobConf, JobStatus jobStatus) {
     this.jid = jid;
     this.jobStatus = jobStatus;
     this.jobConf = jobConf;
   }
-  
+
   public String getMessage() {
     return message;
   }
@@ -48,7 +47,7 @@ public class Job implements RunningJob {
   public void setJobStatus(JobStatus jobStatus) {
     this.jobStatus = jobStatus;
   }
-  
+
   public JobStatus getJobStatus() {
     return jobStatus;
   }
@@ -81,7 +80,7 @@ public class Job implements RunningJob {
   public boolean isSuccessful() throws IOException {
     return jobStatus.isJobComplete();
   }
-  
+
   @Override
   public void killJob() throws IOException {
     jobStatus.setState(JobState.KILLED);
@@ -104,17 +103,5 @@ public class Job implements RunningJob {
   public JobState getJobState() throws IOException {
     return jobStatus.getState();
   }
-  
-  private void ensureState(JobState state) throws IllegalStateException {
-    if (state != jobStatus.getState()) {
-      LOG.error("Job in state "+ jobStatus.getState() + 
-              " instead of " + state);
-      throw new IllegalStateException("Job in state "+ jobStatus.getState() + 
-                                      " instead of " + state);
-    }
-  }
-  
-  
-
 
 }
