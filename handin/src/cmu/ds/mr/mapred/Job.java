@@ -8,6 +8,7 @@ import cmu.ds.mr.mapred.JobStatus.JobState;
 /**
  * Job class for running job
  * 
+ * @author Zeyuan Li
  * */
 public class Job implements RunningJob {
 

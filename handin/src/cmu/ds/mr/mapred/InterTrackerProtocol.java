@@ -5,7 +5,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- * @author Guanyu Wang
+ * 
  * Adapted and changed from Hadoop source code:
  * 
  * */

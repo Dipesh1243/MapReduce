@@ -2,8 +2,9 @@ package cmu.ds.mr.util;
 
 
 /**
- * @author Guanyu Wang 
  * Log is used to debug
+ * 
+ * @author Guanyu Wang 
  ** */
 public class Log {
 

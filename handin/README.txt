@@ -7,6 +7,8 @@ src/		source codes
 conf/		conf files
 		read the README in it for details
 
+doc/	javadoc for our library
+
 Makefile	for compling, starting cluster, managing jobs
 		read the explaination in it for details
 

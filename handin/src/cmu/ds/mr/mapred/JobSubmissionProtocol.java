@@ -7,7 +7,6 @@ import java.rmi.RemoteException;
 import cmu.ds.mr.conf.JobConf;
 
 /**
- * @author Guanyu Wang 
  * Adapted and changed from Hadoop source code:
  * 
  * */

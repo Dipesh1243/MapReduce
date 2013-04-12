@@ -3,9 +3,10 @@ package cmu.ds.mr.mapred;
 import java.io.Serializable;
 
 /**
- * @author Guanyu Wang 
  * JobStatus is used to record jobs' status which is used to identify and check 
  * the specified job
+ * 
+ * @author Guanyu Wang 
  ** */
 
 @SuppressWarnings("serial")

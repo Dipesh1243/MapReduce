@@ -14,8 +14,9 @@ import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
 /**
- * @author Guanyu Wang 
  * JobManager is used to check and kill running jobs on JobTracker
+ * 
+ * @author Guanyu Wang 
  * */
 public class JobManager {
 
