@@ -126,7 +126,6 @@ public class JobClient {
         String logstr = String.format("%s: map %.1f\treduce %.1f", jid.toString(),
                 job.mapProgress(), job.reduceProgress());
         if(!logstr.equals(logstrPre)) {
-          LOG.info(logstr);
           System.out.println(logstr);
           logstrPre = logstr;
         }

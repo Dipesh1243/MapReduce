@@ -151,7 +151,7 @@ public class JobConf implements Serializable {
     File f = new File(outpath);
     if(f.exists()) {
       LOG.error("Output file exists!");
-      throw new IOException("Output file exists!");
+      System.exit(Util.EXIT_OUT_EXIST);
     }
       
     this.outpath = outpath;

@@ -30,7 +30,6 @@ class TaskScheduler {
 		this.jobTable = jobTable;
 		this.maptaskQueue = new LinkedList<MapTask>();
 		this.reducetaskQueue = new LinkedList<ReduceTask>();
-		LOG.setDebug(true);
 	}
 
 	/**
@@ -70,9 +69,9 @@ class TaskScheduler {
 						new TaskStatus(tid, TaskState.READY, TaskType.REDUCE)));
 			}
 		} else {
-			LOG.info("Task:" + tstatus.getTaskId().toString()
+			LOG.debug("Task:" + tstatus.getTaskId().toString()
 					+ " try time exceed.");
-			LOG.info("Job:" + jip.getJobid().toString() + " fail.");
+			LOG.debug("Job:" + jip.getJobid().toString() + " fail.");
 			jip.getStatus().setState(JobState.FAILED);
 		}
 		return ret;

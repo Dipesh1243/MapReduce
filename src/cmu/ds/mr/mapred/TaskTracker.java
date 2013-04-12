@@ -196,7 +196,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
       taskTrackerName = InetAddress.getLocalHost().getCanonicalHostName() + "-"
               + Integer.toString(jobTrackerProxy.getNewTaskTrackerId());
       LOG.info("Tasktracker name: " + taskTrackerName);
-      LOG.info("Starting taskTracker...");
+      LOG.debug("Starting taskTracker...");
 
       while (true) {
         Thread.sleep(Util.TIME_INTERVAL_HEARTBEAT);
@@ -235,7 +235,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
             continue;
           }
 
-          LOG.info("get new task id: " + retTask.taskId.toString());
+          LOG.debug("get new task id: " + retTask.taskId.toString());
           // put it in the taskTracker's table
           taskMap.put(retTask.taskId, retTask);
 
@@ -294,7 +294,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
     LOG.setInfo(true);
     LOG.setDebug(false);
     JobConf conf = new JobConf();
-    LOG.info("prepare to create TaskTracker");
+    LOG.debug("prepare to create TaskTracker");
     TaskTracker tt = new TaskTracker(conf, args[0]);
     tt.startTaskTracker();
   }
