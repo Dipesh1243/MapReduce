@@ -23,7 +23,7 @@ run-an:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.test.Anagram $(IN) $(OUT) $(NRED)
 
 run-jt:
-	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobTracker
+	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobTracker -Djava.rmi.server.codebase=file:./
 
 run-tt:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.TaskTracker $(ADDR)

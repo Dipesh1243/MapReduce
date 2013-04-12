@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +43,9 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 	private static Map<String, Integer> validtasktrackers = new TreeMap<String, Integer>();
 	private static TaskScheduler taskscheduler = new TaskScheduler(jobQueue,
 			jobTable);
-	
+
 	private static Set<JobInProgress> tokillJobs = new HashSet<JobInProgress>();
-	
+
 	private String jobIdentifier;
 	// private final TaskScheduler taskScheduler = new TaskScheduler();
 
@@ -65,7 +66,7 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 	// }
 
 	@Override
-	public JobID getNewJobId() throws IOException {
+	public synchronized JobID getNewJobId() throws IOException {
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 		String curDate = dateFormat.format(new Date());
 		return new JobID(curDate, nextID++);
@@ -105,14 +106,24 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 	}
 
 	@Override
-	public boolean killJob(JobID jobid) throws IOException {
+	public synchronized boolean killJob(String jobid) throws IOException {
+		synchronized (jobTable) {
+			for (JobID jid : jobTable.keySet()) {
+				if (jid.toString().equals(jobid)) {
+					return killJob(jid);
+				}
+			}
+		}
+		return false;
+	}
+
+	public synchronized boolean killJob(JobID jobid) throws IOException {
 		// TODO Auto-generated method stub
 		if (null == jobid) {
 			// LOG.info("Null jobid object sent to JobTracker.killJob()");
 			return false;
 		}
 
-		
 		JobInProgress job = jobTable.get(jobid);
 
 		if (null == job) {
@@ -120,18 +131,20 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 			// " is not a valid job");
 			return false;
 		}
-		LOG.info("Try to kill job:" + job.toString());
-		synchronized(tokillJobs){
+		LOG.info("Try to kill job:" + job.getJobid().toString());
+		synchronized (tokillJobs) {
 			job.kill();
 			tokillJobs.add(job);
 		}
+		LOG.info("Finish killing job:" + job.getJobid().toString());
 		return true;
 	}
-	
+
 	@Override
-	public boolean killAllJobs() throws IOException, RemoteException {
-		synchronized(this){
-			for(JobID jid: jobTable.keySet()){
+	public synchronized boolean killAllJobs() throws IOException,
+			RemoteException {
+		synchronized (this) {
+			for (JobID jid : jobTable.keySet()) {
 				killJob(jid);
 			}
 		}
@@ -139,7 +152,19 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 	}
 
 	@Override
-	public JobStatus getJobStatus(JobID jobid) throws IOException {
+	public JobStatus getJobStatus(String jobid) throws IOException {
+		synchronized (jobTable) {
+			for (JobID jid : jobTable.keySet()) {
+				if (jid.toString().equals(jobid)) {
+					return getJobStatus(jid);
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public synchronized JobStatus getJobStatus(JobID jobid) throws IOException {
 		if (null == jobid) {
 			// LOG.warn("JobTracker.getJobStatus() cannot get status for null jobid");
 			return null;
@@ -149,12 +174,13 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 			if (job == null) {
 				// LOG.warn("JobTracker.getJobStatus() cannot get job from the given jobid");
 			}
+
 			if(job.getStatus().isJobComplete()){
 			  // delete map output
 			  String mapoutPath = job.getJobconf().get(Util.LOCAL_ROOT_DIR) + File.separator + job.getJobid().toString();
 			  File mapout = new File(mapoutPath);
 			  Util.delete(mapout);
-			  
+
 				jobTable.remove(job.getJobid());
 				
 			}
@@ -199,7 +225,7 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 	}
 
 	@Override
-	public Task heartbeat(TaskTrackerStatus status) throws IOException {
+	public synchronized  Task heartbeat(TaskTrackerStatus status) throws IOException {
 		// TODO Auto-generated method stub
 		TaskStatus killtask = null;
 		String tasktrackername = status.getTaskTrackername();
@@ -221,79 +247,84 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 								TaskState.DEFINE, TaskType.MAP));
 					}
 
-					// anytime receiLOG.info("Try to kill job:" + jobid.toString());ve the heartbeat from the tracker, reset its
+					// anytime receiLOG.info("Try to kill job:" +
+					// jobid.toString());ve the heartbeat from the tracker,
+					// reset its
 					// timeout counter.
 					validtasktrackers.put(tasktrackername, 0);
 				}
 
 				List<TaskStatus> tasks = status.getTaskStatusList();
-				LOG.debug("size of incoming tasklist:" + tasks.size());
 				Set<TaskStatus> tl = tasktrackers.get(tasktrackername);
-				LOG.debug("finish the tasktrackers.get(tasktrackername)");
+
 				
 				List<TaskStatus> sucorfail = new ArrayList<TaskStatus>();
 				for (TaskStatus taskstatus : tasks) {
 					JobID jid = taskstatus.getTaskId().getJobId();
 					TaskState tstate = taskstatus.getState();
 					TaskType ttype = taskstatus.getType();
+					if(!jobTable.containsKey(jid)){
+						taskstatus.setState(TaskState.KILLED);
+						killtask = taskstatus;
+						continue;
+					}
 					if (tstate == TaskState.SUCCEEDED) {
-
 						// if the task has been finished, remove the task from
 						// that tracker's record;
-						for (TaskStatus ts : tl) {
+						for(Iterator<TaskStatus> it = tl.iterator(); it.hasNext(); ){
+							TaskStatus ts = it.next();
 							if (ts.getTaskId().toString()
 									.equals(taskstatus.getTaskId().toString())) {
 								ts.setState(TaskState.SUCCEEDED);
-								sucorfail.add(ts);
+								//sucorfail.add(ts);
+								it.remove();
 							}
 						}
 
 						if (ttype == TaskType.MAP) {
 							JobInProgress currentjob = jobTable.get(jid);
-							float currentprogress = currentjob
-									.getStatus().getMapProgress();
-							int num = currentjob.getJobconf()
-									.getNumMapTasks();
-							currentjob
-									.getStatus()
-									.setMapProgress(
-											currentprogress + 1 / (float) num);
-							
+							float currentprogress = currentjob.getStatus()
+									.getMapProgress();
+							int num = currentjob.getJobconf().getNumMapTasks();
+							currentjob.getStatus().setMapProgress(
+									currentprogress + 1 / (float) num);
 						} else if (ttype == TaskType.REDUCE) {
 							JobInProgress currentjob = jobTable.get(jid);
-							float currentprogress = currentjob
-									.getStatus().getReduceProgress();
+							float currentprogress = currentjob.getStatus()
+									.getReduceProgress();
 							int num = currentjob.getJobconf()
 									.getNumReduceTasks();
-							currentjob
-									.getStatus()
-									.setReduceProgress(
-											currentprogress + 1 / (float) num);
-							if(currentjob.getStatus().getReduceProgress() > 0.999){
-								currentjob.getStatus().setState(JobState.SUCCEEDED);
+							currentjob.getStatus().setReduceProgress(
+									currentprogress + 1 / (float) num);
+							if (currentjob.getStatus().getReduceProgress() > 0.999) {
+								currentjob.getStatus().setState(
+										JobState.SUCCEEDED);
 							}
 						}
-					}
-					else if (tstate == TaskState.FAILED) {
+					} else if (tstate == TaskState.FAILED) {
 						// if the task failed, remove the task from
 						// that tracker's record and reassign it
-						for (TaskStatus ts : tl) {
+						for(Iterator<TaskStatus> it = tl.iterator(); it.hasNext(); ){
+							TaskStatus ts = it.next();
 							if (ts.getTaskId().toString()
 									.equals(taskstatus.getTaskId().toString())) {
-								ts.setState(TaskState.FAILED);
-								sucorfail.add(ts);
+								ts.setState(TaskState.SUCCEEDED);
+								//sucorfail.add(ts);
+								it.remove();
 							}
-						}     
-
-						LOG.info("task here:" + taskstatus.getTaskId().toString() + "failed");
+						}
 						taskscheduler.recoverFailedTask(taskstatus);
 
 					}
-					
-					else if(killtask == null){
-						synchronized(tokillJobs){
-							for(JobInProgress jip: tokillJobs){
-								if(jip.toString().equals(taskstatus.getjobID())){
+
+					else if (killtask == null) {
+						synchronized (tokillJobs) {
+							for (JobInProgress jip : tokillJobs) {
+
+								if (jip.getJobid()
+										.toString()
+										.equals(taskstatus.getjobID()
+												.toString())) {
 									taskstatus.setState(TaskState.KILLED);
 									killtask = taskstatus;
 									break;
@@ -302,22 +333,27 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 						}
 					}
 					
-				}
+					else{
+						LOG.debug("killtask:");
+					}
 
-				// remove all success or fail tasks from local record.
-				for (TaskStatus ts : sucorfail) {
-					tl.remove(ts);
 				}
+//				LOG.debug("remove all success or fail tasks from local record.");
+//				// remove all success or fail tasks from local record.
+//				for (TaskStatus ts : sucorfail) {
+//					tl.remove(ts);
+//				}
 				
-				if(killtask != null){
-				    return new MapTask(killtask.getTaskId(), null, killtask);
+				if (killtask != null) {
+					return new MapTask(killtask.getTaskId(), null, killtask);
 				}
 
 				// assign new task if there is one
 				if (status.getNumFreeSlots() > 0) {
 					Task newtask = taskscheduler.assignTask();
 					// add the new assigned task to local record;
-					if(newtask != null)tl.add(newtask.getTaskStatus());
+					if (newtask != null)
+						tl.add(newtask.getTaskStatus());
 					return newtask;
 				}
 			}
@@ -339,7 +375,7 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 	}
 
 	public static void main(String[] args) {
-		LOG.setDebug(false);
+		LOG.setDebug(true);
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
 		}
@@ -379,7 +415,5 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 				tocontroller, 0, 5, TimeUnit.SECONDS);
 
 	}
-
-	
 
 }
