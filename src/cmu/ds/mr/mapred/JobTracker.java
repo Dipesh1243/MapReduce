@@ -33,10 +33,11 @@ import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
 /**
- * @author Guanyu Wang 
  * JobTracker is used to control all TaskTrackers
  * All jobs are submitted to jobtracker and then assigned to 
  * all other tasktrackers
+ * 
+ * @author Guanyu Wang 
  ** */
 public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 	private static final Log LOG = new Log("JobTracker.class");

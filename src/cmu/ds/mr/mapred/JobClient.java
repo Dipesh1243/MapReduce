@@ -18,7 +18,9 @@ import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
 /**
- * @author Guanyu Wang JobClient is used to submit jobs from local to jobtracker
+ * JobClient is used to submit jobs from local to jobtracker
+ * 
+ * @author Guanyu Wang 
  * */
 public class JobClient {
 

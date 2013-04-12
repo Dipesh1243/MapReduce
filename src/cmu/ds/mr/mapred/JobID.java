@@ -4,8 +4,9 @@ package cmu.ds.mr.mapred;
 import java.io.Serializable;
 
 /**
- * @author Guanyu Wang 
  * JobID is used to privide the identifier for job
+ * 
+ * @author Guanyu Wang 
  * */
 
 @SuppressWarnings("serial")

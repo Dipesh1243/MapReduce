@@ -10,9 +10,10 @@ import cmu.ds.mr.util.Log;
 
 
 /**
- * @author Guanyu Wang 
  * JobInProgress is used to record running jobs with its status and config on 
  * JobTracker
+ * 
+ * @author Guanyu Wang 
  * */
 @SuppressWarnings("serial")
 public class JobInProgress implements Comparable<JobInProgress>, Serializable{
