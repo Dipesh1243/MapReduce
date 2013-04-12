@@ -14,6 +14,9 @@ import cmu.ds.mr.io.FileSplit;
 import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
+/**
+ * JobConf 
+ * */
 public class JobConf implements Serializable {
   private static final Log LOG = new Log("JobConf.class");
 

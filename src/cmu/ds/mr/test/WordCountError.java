@@ -26,6 +26,8 @@ public class WordCountError {
       StringTokenizer tokenizer = new StringTokenizer(line);
       while (tokenizer.hasMoreTokens()) {
         word = tokenizer.nextToken();
+        // Introduce an error
+        word = null;
         output.collect(word, one);
       }
     }

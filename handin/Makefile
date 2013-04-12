@@ -19,6 +19,9 @@ all:
 run-wc:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.test.WordCount $(IN) $(OUT) $(NRED)
 
+run-wcerror:
+	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.test.WordCountError $(IN) $(OUT) $(NRED)
+
 run-an:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.test.Anagram $(IN) $(OUT) $(NRED)
 

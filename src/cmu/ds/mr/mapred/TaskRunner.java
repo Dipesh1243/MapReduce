@@ -36,11 +36,11 @@ public class TaskRunner implements Runnable {
       try {
         taskTrackerProxy.fail(task.getTaskStatus().getTaskId());
       } catch (IOException e1) {
-        LOG.error("Task fails. IOException: ");
+        LOG.error("Task fails.");
       } catch (InterruptedException e1) {
-        LOG.error("Task fails. InterruptedException: ");
+        LOG.error("Task fails.");
       }
-      LOG.error("Task fails. Exception: ");
+      LOG.error("Task fails.");
     } 
   }
 
