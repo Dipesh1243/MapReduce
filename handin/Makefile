@@ -1,5 +1,5 @@
 #Usage of the makefile:
-#Please adjust the configure file (./conf/mapred.conf) before start real jobs
+#Please adjust the configure file (./conf/mapred.conf) before start real jobs (run jobTracker first and write hostname to config file)
 #
 #
 #Compile:
@@ -21,10 +21,10 @@
 #	on any machine to submit the test job:
 #		  run the command to submit the word count job: 
 #			make run-wc IN=? OUT=? NRED=?
-#			(where the first ? is the input file and second ? is the output directory, the third ? is the reduce task number)
+#			(where the first ? is the input file and second ? is the output directory, the third ? is the number of reduce tasks)
 #		  run the command to submit the anagram-finding job:
 #			make run-an IN=? OUT=? NRED=?
-#			(where the first ? is the input file and second ? is the output directory, the third ? is the reduce task number)
+#			(where the first ? is the input file and second ? is the output directory, the third ? is the number of reduce tasks)
 #		  run the command to submit the word count job with error:
 #			make run-wcerror IN=? OUT=? NRED=?
 #			(this is for testing failure)
