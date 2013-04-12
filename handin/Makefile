@@ -28,14 +28,20 @@ run-jt:
 run-tt:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.TaskTracker $(ADDR)
 
-checkall:
+checkjob:
+	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobManager -check $(ID)
+
+killjob:
+	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobManager -kill $(ID)
+
+checkalljob:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobManager -checkall
 
-killall:
+killalljob:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.mapred.JobManager -killall
 
 run-registry:
-	rmiregistry
+	rmiregistry &
 
 clean:
 	rm $(CLASSES)

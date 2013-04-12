@@ -86,7 +86,7 @@ public class JobManager {
 
 			String logstr = String.format("%s: map %.1f\treduce %.1f",
 					jid.toString(), job.mapProgress(), job.reduceProgress());
-			LOG.info(logstr);
+			System.out.println(logstr);
 
 		} catch (RemoteException re) {
 			LOG.error("Remote exception! JobTracker not started or down!");
@@ -96,8 +96,26 @@ public class JobManager {
 	}
 
 	public boolean checkAndPrint(String jid) throws IOException {
-		return false;
+		
+		try {
 
+			// ask job tracker for new job status
+			JobStatus jobStatusNew = jobTrackerProxy.getJobStatus(jid);
+
+			if (jobStatusNew.getState() == JobState.FAILED) {
+				LOG.info("Job failed");
+				return false;
+			}
+
+			String logstr = String.format("%s: map %.1f\treduce %.1f",
+					jid, jobStatusNew.getMapProgress(), jobStatusNew.getReduceProgress());
+			System.out.println(logstr);
+
+		} catch (RemoteException re) {
+			LOG.error("Remote exception! JobTracker not started or down!");
+			System.exit(Util.EXIT_JT_DOWN);
+		}
+		return true;
 	}
 
 	public boolean kill(String jid) throws IOException {
