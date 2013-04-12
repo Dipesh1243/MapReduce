@@ -186,7 +186,7 @@ public class TaskTracker implements TaskUmbilicalProtocol {
 
     numFreeSlots.incrementAndGet();
     
-    LOG.info(String.format("Task %s successful.", taskid.toString()));
+    //LOG.info(String.format("Task %s successful.", taskid.toString()));
   }
 
   private void startTaskTracker() throws IOException {

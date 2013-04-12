@@ -52,7 +52,7 @@ public class ReduceTask extends Task {
     
     output.writeToDisk();
     
-    // TODO delete map output
+//    // TODO delete map output
 //    File mapoutFile = new File(mapOutBase);
 //    Util.delete(mapoutFile);
     

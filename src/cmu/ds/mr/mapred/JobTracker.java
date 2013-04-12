@@ -1,5 +1,6 @@
 package cmu.ds.mr.mapred;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
@@ -149,7 +150,13 @@ public class JobTracker implements JobSubmissionProtocol, InterTrackerProtocol {
 				// LOG.warn("JobTracker.getJobStatus() cannot get job from the given jobid");
 			}
 			if(job.getStatus().isJobComplete()){
+			  // delete map output
+			  String mapoutPath = job.getJobconf().get(Util.LOCAL_ROOT_DIR) + File.separator + job.getJobid().toString();
+			  File mapout = new File(mapoutPath);
+			  Util.delete(mapout);
+			  
 				jobTable.remove(job.getJobid());
+				
 			}
 			return job.getStatus();
 		}

@@ -29,7 +29,7 @@ public class Anagram {
    * @author subbu iyer
    */
 
-  public class AnagramMapper extends MapReduceBase implements Mapper<Long, String, String, String> {
+  public static class AnagramMapper extends MapReduceBase implements Mapper<Long, String, String, String> {
 
     public void map(Long key, String value, OutputCollector<String, String> output)
             throws IOException {
@@ -51,7 +51,7 @@ public class Anagram {
    * 
    */
 
-  public class AnagramReducer extends MapReduceBase implements
+  public static class AnagramReducer extends MapReduceBase implements
           Reducer<String, String, String, String> {
 
     public void reduce(String key, Iterator<String> values, OutputCollector<String, String> output)
@@ -83,7 +83,6 @@ public class Anagram {
     conf.setJobName("anagramcount");
 
     conf.setMapperClass(AnagramMapper.class);
-    // conf.setCombinerClass(AnagramReducer.class);
     conf.setReducerClass(AnagramReducer.class);
 
     conf.setInpath(args[0]);
