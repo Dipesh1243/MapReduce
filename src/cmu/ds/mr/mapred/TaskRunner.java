@@ -1,11 +1,8 @@
 package cmu.ds.mr.mapred;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
-import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.util.Log;
-import cmu.ds.mr.util.Util;
 
 /**
  * Class for running mappaer and reducer in a separate thread

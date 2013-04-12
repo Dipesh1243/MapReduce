@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 import cmu.ds.mr.conf.JobConf;
-import cmu.ds.mr.util.Log;
 
 /**
  * The abstract class for Task
@@ -16,8 +15,6 @@ import cmu.ds.mr.util.Log;
  * */
 @SuppressWarnings("serial")
 public abstract class Task implements Serializable {
-  private static final Log LOG = new Log("Task.class");
-
   // JobID is in taskId, use task.getJobid() to get JobId
   // JobID can only be set by new TaskID
   protected TaskID taskId;

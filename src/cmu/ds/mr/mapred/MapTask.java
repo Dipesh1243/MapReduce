@@ -25,6 +25,7 @@ public class MapTask extends Task {
     super(taskid, taskconf, taskStatus);
   }
 
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public void startTask(Task task, TaskUmbilicalProtocol taskTrackerProxy) throws IOException,
           ClassNotFoundException, InterruptedException, RuntimeException, InstantiationException,

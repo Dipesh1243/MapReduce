@@ -2,7 +2,6 @@ package cmu.ds.mr.mapred;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -13,9 +12,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import cmu.ds.mr.conf.JobConf;
-import cmu.ds.mr.io.FileSplit;
-import cmu.ds.mr.io.LineRecordReader;
-import cmu.ds.mr.io.MapOutputCollector;
 import cmu.ds.mr.io.RedOutputCollector;
 import cmu.ds.mr.util.Util;
 
@@ -35,6 +31,7 @@ public class ReduceTask extends Task {
     redInputMap = new TreeMap<String, List<String>>();
   }
 
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public void startTask(Task task, TaskUmbilicalProtocol taskTrackerProxy) throws IOException,
           ClassNotFoundException, InterruptedException, RuntimeException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -49,7 +46,6 @@ public class ReduceTask extends Task {
     
     // get output collector
     String basePath = taskConf.getOutpath() + File.separator;
-    //int nred = taskConf.getNumReduceTasks();
     RedOutputCollector output = new RedOutputCollector(basePath, taskNum);
     
     for(Entry<String, List<String>> en : redInputMap.entrySet()) {
@@ -57,10 +53,6 @@ public class ReduceTask extends Task {
     } 
     
     output.writeToDisk();
-    
-//    // TODO delete map output
-//    File mapoutFile = new File(mapOutBase);
-//    Util.delete(mapoutFile);
     
     // notify taskTracker
     taskTrackerProxy.done(taskStatus.getTaskId());
