@@ -1,7 +1,11 @@
 package cmu.ds.mr.util;
 
-public class Log {
 
+/**
+ * @author Guanyu Wang 
+ * Log is used to debug
+ ** */
+public class Log {
 
   private boolean Debug = false;
   private boolean Info = true;

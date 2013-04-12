@@ -1,21 +1,20 @@
 package cmu.ds.mr.mapred;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.TreeMap;
 
-import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.JobStatus.JobState;
 import cmu.ds.mr.mapred.TaskStatus.TaskState;
 import cmu.ds.mr.mapred.TaskStatus.TaskType;
 import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
+/**
+ * @author Guanyu Wang 
+ * TaskScheduler is used assign ready jobs to tasktrackers which have free
+ * running slots.
+ ** */
 class TaskScheduler {
 	public static final Log LOG = new Log("TaskScheduler.class");
 
@@ -30,25 +29,6 @@ class TaskScheduler {
 		this.jobTable = jobTable;
 		this.maptaskQueue = new LinkedList<MapTask>();
 		this.reducetaskQueue = new LinkedList<ReduceTask>();
-	}
-
-	/**
-	 * Lifecycle method to allow the scheduler to start any work in separate
-	 * threads.
-	 * 
-	 * @throws IOException
-	 */
-	public void start() throws IOException {
-		// do nothing
-	}
-
-	/**
-	 * Lifecycle method to allow the scheduler to stop any work it is doing.
-	 * 
-	 * @throws IOException
-	 */
-	public void terminate() throws IOException {
-		// do nothing
 	}
 
 	public synchronized boolean recoverFailedTask(TaskStatus tstatus) {
@@ -133,15 +113,13 @@ class TaskScheduler {
 	/**
 	 * Returns the tasks we'd like the TaskTracker to execute right now.
 	 * 
-	 * @param taskTracker
-	 *            The TaskTracker for which we're looking for tasks.
-	 * @return A list of tasks to run on that TaskTracker, possibly empty.
+	 * @return A task to run on that TaskTracker, possibly empty.
 	 */
 	public synchronized Task assignTask() {
 		synchronized (jobTable) {
 			synchronized (reducetaskQueue) {
 				synchronized (maptaskQueue) {
-					
+
 					while (!reducetaskQueue.isEmpty()) {
 						JobID jid = reducetaskQueue.peek().getJobid();
 						if (!jobTable.containsKey(jid)
@@ -184,44 +162,6 @@ class TaskScheduler {
 				}
 			}
 		}
-	}
-
-	// public synchronized Task assignTaskbasedonType(TaskType type) {
-	// if (type == TaskType.REDUCE) {
-	// if (reducetaskQueue.isEmpty()) {
-	// if (!addTasks()) {
-	// return null;
-	// }
-	// }
-	// JobID toreducejob = reducetaskQueue.peek().getJobid();
-	// if (jobTable.get(toreducejob).getStatus().getMapProgress() >= 0.99) {
-	// return reducetaskQueue.poll();
-	// }
-	// return null;
-	// } else {
-	// if (maptaskQueue.isEmpty()) {
-	// if (!addTasks()) {
-	// return null;
-	// }
-	// }
-	// return maptaskQueue.poll();
-	// }
-	// }
-
-	public synchronized List<Task> assignTasks(TaskTrackerStatus taskTracker) {
-		// TODO: give tasks to tasktrackers based on their status
-		return null;
-	}
-
-	/**
-	 * Returns a collection of jobs in an order which is specific to the
-	 * particular scheduler.
-	 * 
-	 * @param queueName
-	 * @return
-	 */
-	public Collection<JobInProgress> getJobs(String queueName) {
-		return null;
 	}
 
 }

@@ -1,38 +1,27 @@
 package cmu.ds.mr.mapred;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
-import cmu.ds.mr.conf.JobConf;
-import cmu.ds.mr.io.FileSplit;
-import cmu.ds.mr.io.FileSplitter;
 import cmu.ds.mr.mapred.JobStatus.JobState;
 import cmu.ds.mr.util.Log;
 import cmu.ds.mr.util.Util;
 
 /**
- * JobClient can 1. Configure job 2. Kill job 3. Query progress or status
+ * @author Guanyu Wang 
+ * JobManager is used to check and kill running jobs on JobTracker
  * */
 public class JobManager {
 
 	private static final Log LOG = new Log("JobManager.class");
 
 	public JobSubmissionProtocol jobTrackerProxy;
-
-	private String sysDir; // root directory of all job related files
 
 	private Properties prop = new Properties();
 
@@ -48,13 +37,9 @@ public class JobManager {
 			if (System.getSecurityManager() == null) {
 				System.setSecurityManager(new SecurityManager());
 			}
-			// get job tracker start address fomr jobConf
+
 			Registry registry = LocateRegistry.getRegistry(prop
 					.getProperty(Util.JOBTRACK_ADDR));
-
-			// TODO: TEST
-			// Registry registry =
-			// LocateRegistry.getRegistry(jobConf.getJobTrackerAddr());
 
 			jobTrackerProxy = (JobSubmissionProtocol) registry
 					.lookup(Util.SERVICE_NAME);
@@ -96,7 +81,7 @@ public class JobManager {
 	}
 
 	public boolean checkAndPrint(String jid) throws IOException {
-		
+
 		try {
 
 			// ask job tracker for new job status
@@ -107,8 +92,9 @@ public class JobManager {
 				return false;
 			}
 
-			String logstr = String.format("%s: map %.1f\treduce %.1f",
-					jid, jobStatusNew.getMapProgress(), jobStatusNew.getReduceProgress());
+			String logstr = String.format("%s: map %.1f\treduce %.1f", jid,
+					jobStatusNew.getMapProgress(),
+					jobStatusNew.getReduceProgress());
 			System.out.println(logstr);
 
 		} catch (RemoteException re) {
