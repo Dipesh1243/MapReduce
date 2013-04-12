@@ -94,7 +94,7 @@ interface JobSubmissionProtocol extends Remote {
   /**
    * Kill the indicated job
    */
-  public boolean killJob(JobID jobid) throws IOException, RemoteException;
+  public boolean killJob(String jobid) throws IOException, RemoteException;
   public boolean killAllJobs() throws IOException, RemoteException;
 
   /**
@@ -123,6 +123,7 @@ interface JobSubmissionProtocol extends Remote {
    * @return Status of the job, or null if not found.
    */
   public JobStatus getJobStatus(JobID jobid) throws IOException, RemoteException;
+  public JobStatus getJobStatus(String jobid) throws IOException, RemoteException;
 
   /**
    * Grab the current job counters
