@@ -1,6 +1,11 @@
 #Usage of the makefile:
 #Please adjust the configure file (./conf/mapred.conf) before start real jobs
 #
+#
+#Compile:
+#	make clean
+#	make
+#
 #Start the cluster:
 #	on JobTracker machine:
 #		1)run the command to start rmi registry: 
