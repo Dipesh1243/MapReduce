@@ -30,17 +30,17 @@ public class TaskRunner implements Runnable {
   public void run() {
     try {
       task.startTask(task, taskTrackerProxy);
-      LOG.info(String.format("Task %s successful.", task.toString()));
+      LOG.info(String.format("Task %s successful.", task.taskId.toString()));
       
     } catch (Exception e) {
       try {
         taskTrackerProxy.fail(task.getTaskStatus().getTaskId());
       } catch (IOException e1) {
-        LOG.error("Task fails. IOException: " + e);
+        LOG.error("Task fails. IOException: ");
       } catch (InterruptedException e1) {
-        LOG.error("Task fails. InterruptedException: " + e);
+        LOG.error("Task fails. InterruptedException: ");
       }
-      LOG.error("Task fails. Exception: " + e);
+      LOG.error("Task fails. Exception: ");
     } 
   }
 

@@ -96,9 +96,7 @@ public class JobClient {
       System.exit(Util.EXIT_JT_NOTSTART);
     }
     catch (Exception e) {
-      e.printStackTrace();
-      
-      LOG.error("Job failed. Exception: ");
+      LOG.error("Job failed.");
       System.exit(Util.EXIT_JT_DOWN);
     }
     
@@ -121,7 +119,7 @@ public class JobClient {
         job.setJobStatus(jobStatusNew);
   
         if(job.getJobState() == JobState.FAILED){
-        	LOG.info("Job failed");
+        	//LOG.debug("Job failed");
         	return false;
         }
         
