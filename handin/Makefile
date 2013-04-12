@@ -1,3 +1,44 @@
+#Usage of the makefile:
+#Please adjust the configure file (./conf/mapred.conf) before start real jobs
+#
+#Start the cluster:
+#	on JobTracker machine:
+#		1)run the command to start rmi registry: 
+#			make run-registry
+#		2)run the command to start jobtracker: 
+#			make run-jt
+#	on every TaskTracker machine:
+#		  run the command to start tasktracker: 
+#			make run-tt ADDR=? 
+#			(where ? is the jobtracker machine's hostname)
+#	
+#Start jobs:
+#	on any machine to submit the test job:
+#		  run the command to submit the word count job: 
+#			make run-wc IN=? OUT=? NRED=?
+#			(where the first ? is the input file and second ? is the output directory, the third ? is the reduce task number)
+#		  run the command to submit the anagram-finding job:
+#			make run-an IN=? OUT=? NRED=?
+#			(where the first ? is the input file and second ? is the output directory, the third ? is the reduce task number)
+#		  run the command to submit the word count job with error:
+#			make run-wcerror IN=? OUT=? NRED=?
+#			(this is for testing failure)
+#
+#Job Management:
+#	on any machine:
+#		  run the command to check all runnning jobs' status:
+#			make checkalljob
+#		  run the command to check a runnning job' status:
+#			make checkjob ID=?
+#			(where ? is the job's id)
+#		  run the command to killall runnning jobs:
+#			make killalljob
+#		  run the command to kill a runnning job:
+#			make killjob ID=?
+#			(where ? is the job's id)
+
+
+
 
 .SUFFIXES: .java .class 
 SOURCES = ../src/*.java 
@@ -10,11 +51,9 @@ JFLAGS = -g -classpath . -d .
 
 default:
 	ant
-	#javac $(JFLAGS) $(SOURCES)
 
 all:
 	ant
-	#javac $(JFLAGS) $(SOURCES)
 
 run-wc:
 	java -cp . -Djava.security.policy=security.policy cmu.ds.mr.test.WordCount $(IN) $(OUT) $(NRED)

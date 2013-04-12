@@ -8,6 +8,13 @@ import cmu.ds.mr.conf.JobConf;
 import cmu.ds.mr.mapred.JobStatus.JobState;
 import cmu.ds.mr.util.Log;
 
+
+/**
+ * @author Guanyu Wang 
+ * JobInProgress is used to record running jobs with its status and config on 
+ * JobTracker
+ * */
+@SuppressWarnings("serial")
 public class JobInProgress implements Comparable<JobInProgress>, Serializable{
   static final Log LOG = new Log("JobInProgress.class");
   
@@ -17,15 +24,7 @@ public class JobInProgress implements Comparable<JobInProgress>, Serializable{
   
   private JobTracker jobtracker;
   
-  private int maxMapsPerNode;
-  private int maxReducesPerNode;
-  private int runningMapLimit;
-  private int runningReduceLimit;
-  
-  private volatile boolean launchedCleanup = false;
-  private volatile boolean launchedSetup = false;
-  private volatile boolean jobKilled = false;
-  private volatile boolean jobFailed = false;
+ 
   JobInitKillStatus jobInitKillStatus = new JobInitKillStatus();
   
   long startTime;
@@ -49,8 +48,6 @@ public class JobInProgress implements Comparable<JobInProgress>, Serializable{
             0, 0);
     
     this.startTime = System.currentTimeMillis();
-    
-    // TODO: init status here
     this.status.setStartTime(startTime);
   }
 
@@ -89,7 +86,8 @@ public class JobInProgress implements Comparable<JobInProgress>, Serializable{
   public void kill(){
     boolean killNow = false;
     synchronized(jobInitKillStatus) {
-      if(jobInitKillStatus.killed) {//job is already marked for killing
+      if(jobInitKillStatus.killed) {
+    	//job is already marked for killing
         return;
       }
       jobInitKillStatus.killed = true;
@@ -113,19 +111,9 @@ public class JobInProgress implements Comparable<JobInProgress>, Serializable{
   }
   
   
-  public synchronized Task obtainNewNonLocalMapTask(TaskTrackerStatus tts){
-    
-    //TODO: need to implement
-    
-    return null;
-  }
-  
-  
-  
   private static class JobInitKillStatus {
     //flag to be set if kill is called
     boolean killed;
-    
     boolean initStarted;
     boolean initDone;
   }

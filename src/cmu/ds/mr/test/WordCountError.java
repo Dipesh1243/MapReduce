@@ -12,7 +12,7 @@ import cmu.ds.mr.mapred.Mapper;
 import cmu.ds.mr.mapred.Reducer;
 
 /**
- * Example word count program with bug.
+ * Example word count program (with an error in the mapper).
  * 
  * Adopted from http://www.cloudera.com/content/cloudera-content/cloudera-docs/HadoopTutorial/CDH4/Hadoop-Tutorial/ht_topic_5_1.html
  * */
